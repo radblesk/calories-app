@@ -8,17 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
+
+    @State private var count: Double = 0
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            Tab("Summary", systemImage: "heart") {
+                SummaryView()
+            }
+            Tab("Settings", systemImage: "gear") {
+                Text("Settings View")
+            }
         }
-        .padding()
+        .tabViewStyle(.sidebarAdaptable)
+        .defaultTabBarPlacement(.sidebar)
     }
 }
 
 #Preview {
     ContentView()
+        .overlays()
+        .environments()
 }
