@@ -12,6 +12,7 @@ struct CaloriesApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environments()
         }
     }
 }
