@@ -43,7 +43,13 @@ final class CaloriesViewModel {
     }
 
     func getCalories(for date: Date) async {
-        guard let statistics = await client.fetchMostRecentSample(for: .dietaryEnergyConsumed, at: date) else { return }
+        guard
+            let statistics = await client.fetchStatistics(
+                for: .dietaryEnergyConsumed,
+                from: Calendar.current.date(byAdding: .day, value: -7, to: date)!,
+                to: nil
+            )
+        else { return }
         self.statistics.removeAll()
         self.weeklyTotal = 0
         self.todayStatistics = nil

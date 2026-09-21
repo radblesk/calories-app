@@ -87,17 +87,22 @@ final class HealthStoreClient {
         }
     }
 
-    func fetchMostRecentSample(for identifier: HKQuantityTypeIdentifier, at date: Date) async -> HKStatisticsCollection? {
+    func fetchStatistics(for identifier: HKQuantityTypeIdentifier, from startDate: Date, to endDate: Date?) async -> HKStatisticsCollection? {
         guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else { return nil }
 
         let daily = DateComponents(day: 1)
-        let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: date)
-        let oneWeekAgo = HKQuery.predicateForSamples(withStart: sevenDaysAgo, end: nil, options: .strictStartDate)
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictEndDate)
 
         do {
             try await requestAuthorizationIfNeeded()
             return try await withCheckedThrowingContinuation { continuation in
-                let query = HKStatisticsCollectionQuery(quantityType: quantityType, quantitySamplePredicate: oneWeekAgo, options: .cumulativeSum, anchorDate: .now, intervalComponents: daily)
+                let query = HKStatisticsCollectionQuery(
+                    quantityType: quantityType,
+                    quantitySamplePredicate: predicate,
+                    options: .cumulativeSum,
+                    anchorDate: .now,
+                    intervalComponents: daily
+                )
                 query.initialResultsHandler = { _, statistics, error in
                     if let error {
                         continuation.resume(throwing: error)
