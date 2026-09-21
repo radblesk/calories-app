@@ -10,6 +10,8 @@ import SwiftUI
 struct ChartBottomRow: View {
     @Environment(CaloriesViewModel.self) private var viewModel
 
+    @AppStorage("unit") private var unit: Unit = .kcal
+
     var body: some View {
         VStack(alignment: .leading) {
             Text("Today's Stats")
@@ -17,10 +19,10 @@ struct ChartBottomRow: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(.gray)
             Divider()
-            LabeledContent("Consumed", value: "\(viewModel.caloriesConsumed.formatted(.number.precision(.fractionLength(2)))) kcal")
-            LabeledContent("Remaining", value: "\(viewModel.caloriesRemaining.formatted(.number.precision(.fractionLength(2)))) kcal")
-            if let overLimit = viewModel.overLimit?.formatted(.number.precision(.fractionLength(2))) {
-                LabeledContent("Over Limit", value: "\(overLimit) kcal")
+            LabeledContent("Consumed", value: "\(viewModel.caloriesConsumed.formatted(.number.precision(.fractionLength(0)))) \(unit.unitExtension)")
+            LabeledContent("Remaining", value: "\(viewModel.caloriesRemaining.formatted(.number.precision(.fractionLength(0)))) \(unit.unitExtension)")
+            if let overLimit = viewModel.overLimit?.formatted(.number.precision(.fractionLength(0))) {
+                LabeledContent("Over Limit", value: "\(overLimit) \(unit.unitExtension)")
                     .foregroundStyle(.red)
             }
         }

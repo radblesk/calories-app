@@ -16,19 +16,20 @@ struct WeeklyChart: View {
 
     var body: some View {
         Chart(data, id: \.self) { item in
-            let sum = item.sumQuantity()?.doubleValue(for: .kilocalorie()) ?? 0
-            let isToday = Calendar.current.startOfDay(for: item.endDate) == Calendar.current.startOfDay(for: .now)
             BarMark(
                 x: .value("Date", item.endDate, unit: .day),
-                y: .value("Calories", sum)
+                y: .value("Calories", item.extractedValue())
             )
-            .foregroundStyle(sum > viewModel.calorieLimit ? Color.red.gradient : isToday ? Color.green.gradient : Color.gray.gradient)
+            .foregroundStyle(
+                item.extractedValue() > viewModel.calorieLimit
+                    ? Color.red.gradient : item.endDate.isToday ? Color.green.gradient : Color.gray.gradient
+            )
             .clipShape(.rect(cornerRadius: 8))
             .annotation(position: .top) {
-                if sum > 0 {
-                    Text(sum, format: .number.precision(.fractionLength(0)))
+                if item.extractedValue() > 0 {
+                    Text(item.formattedValue())
                         .font(.caption2)
-                        .foregroundStyle(sum > viewModel.calorieLimit ? .red : .gray)
+                        .foregroundStyle(item.extractedValue() > viewModel.calorieLimit ? .red : .gray)
                 }
             }
         }

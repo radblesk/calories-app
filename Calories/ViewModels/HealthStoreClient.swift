@@ -133,10 +133,13 @@ final class HealthStoreClient {
         }
     }
 
-    func saveSample(for identifier: HKQuantityTypeIdentifier, unit: HKUnit, count: Double, at date: Date) async {
+    func saveSample(for identifier: HKQuantityTypeIdentifier, count: Double, at date: Date) async {
         guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else { return }
 
-        let quantity = HKQuantity(unit: unit, doubleValue: count)
+        let unit =
+            UserDefaults.standard.string(forKey: "unit")
+            .flatMap(Unit.init(rawValue:)) ?? .kcal
+        let quantity = HKQuantity(unit: unit.hkUnit, doubleValue: count)
         let sample = HKQuantitySample(type: quantityType, quantity: quantity, start: date, end: date)
 
         do {

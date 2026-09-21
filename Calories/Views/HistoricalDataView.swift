@@ -10,11 +10,12 @@ import SwiftUI
 
 struct HistoricalDataView: View {
     @State private var viewModel = HistoricalDataViewModel()
+    @AppStorage("unit") private var unit: Unit = .kcal
 
     var body: some View {
         NavigationStack {
             List {
-                Section("Kilocalories") {
+                Section(unit.title) {
                     ForEach(viewModel.data, id: \.self) { sample in
                         NavigationLink {
                             SampleDetailView(sample: sample)
@@ -23,7 +24,7 @@ struct HistoricalDataView: View {
                                 Text(sample.endDate.sampleFormattedDate())
                             } label: {
                                 Label {
-                                    Text(sample.kilocalories())
+                                    Text(sample.formattedValue())
                                 } icon: {
                                     Image(.caloriesIcon)
                                         .resizable()

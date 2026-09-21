@@ -10,11 +10,12 @@ import SwiftUI
 struct ChartTopRowItem: View {
     let title: String
     let value: Double
-    let units: String
+
+    @AppStorage("unit") private var unit: Unit = .kcal
 
     var attributedValue: AttributedString {
         let value = AttributedString(value.formatted(.number.precision(.fractionLength(0))))
-        var unit = AttributedString(units)
+        var unit = AttributedString(unit.unitExtension)
         unit.foregroundColor = .gray
         return value + " " + unit
     }

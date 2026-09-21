@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("dailyLimit") private var dailyLimit: Double = 1500
+    @AppStorage("unit") private var unit: Unit = .kcal
 
     var body: some View {
         NavigationStack {
@@ -18,7 +19,7 @@ struct SettingsView: View {
                         HStack(spacing: 4) {
                             TextField("Daily Goal", value: $dailyLimit, format: .number.precision(.fractionLength(0)))
                                 .multilineTextAlignment(.trailing)
-                            Text("kcal")
+                            Text(unit.unitExtension)
                         }
                     } label: {
                         Text("Daily Goal")

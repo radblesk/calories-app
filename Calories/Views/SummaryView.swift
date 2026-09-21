@@ -11,15 +11,17 @@ import SwiftUI
 struct SummaryView: View {
     @State private var viewModel = CaloriesViewModel()
 
+    @AppStorage("unit") private var unit: Unit = .kcal
+
     var body: some View {
         NavigationStack {
             List {
                 Section("Weekly Stats") {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 40) {
-                            ChartTopRowItem(title: "Total", value: viewModel.weeklyTotal, units: "kcal")
-                            ChartTopRowItem(title: "Average", value: viewModel.weeklyAverage, units: "kcal")
-                            ChartTopRowItem(title: "Daily Limit", value: viewModel.calorieLimit, units: "kcal")
+                            ChartTopRowItem(title: "Total", value: viewModel.weeklyTotal)
+                            ChartTopRowItem(title: "Average", value: viewModel.weeklyAverage)
+                            ChartTopRowItem(title: "Daily Limit", value: viewModel.calorieLimit)
                         }
                         ChartRangeView {
                             if let firstDate = viewModel.statistics.first?.endDate {
@@ -40,6 +42,13 @@ struct SummaryView: View {
                     NavigationLink("Show All Data") {
                         HistoricalDataView()
                     }
+                    Picker("Unit", selection: $unit) {
+                        ForEach(Unit.allCases) { unit in
+                            Text(unit.unitExtension)
+                                .tag(unit)
+                        }
+                    }
+                    .pickerStyle(.navigationLink)
                 }
             }
             .navigationTitle("Calories")
@@ -50,10 +59,10 @@ struct SummaryView: View {
                 }
             }
             .task {
-                await viewModel.getCalories(for: .now)
+                await viewModel.getStatistics(for: .now)
             }
             .refreshable {
-                await viewModel.getCalories(for: .now)
+                await viewModel.getStatistics(for: .now)
             }
             .sheet(isPresented: $viewModel.addingData) {
                 NewEntryView()

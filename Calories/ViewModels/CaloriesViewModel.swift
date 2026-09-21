@@ -15,10 +15,13 @@ final class CaloriesViewModel {
     // Data
 
     var statistics: [HKStatistics] = []
-    var weeklyTotal: Double = 0
+    var weeklyTotal: Double { calculateWeeklyTotal() }
     var weeklyAverage: Double { weeklyTotal / 7 }
-    var todayStatistics: HKStatistics? = nil
-    var caloriesConsumed: Double { todayStatistics?.sumQuantity()?.doubleValue(for: .kilocalorie()) ?? 0 }
+    var todayStatistics: HKStatistics? { getTodaySample() }
+    var caloriesConsumed: Double {
+        todayStatistics?.sumQuantity()?.doubleValue(for: (UserDefaults.standard.string(forKey: "unit")
+            .flatMap(Unit.init(rawValue:)) ?? .kcal).hkUnit) ?? 0
+    }
     var caloriesRemaining: Double { max(calorieLimit - caloriesConsumed, 0) }
 
     // Goals/Limits
@@ -38,11 +41,11 @@ final class CaloriesViewModel {
     // MARK: - Methods
 
     func saveCalories(_ count: Double, at date: Date) async {
-        await client.saveSample(for: .dietaryEnergyConsumed, unit: .kilocalorie(), count: count, at: date)
-        await getCalories(for: .now)
+        await client.saveSample(for: .dietaryEnergyConsumed, count: count, at: date)
+        await getStatistics(for: .now)
     }
 
-    func getCalories(for date: Date) async {
+    func getStatistics(for date: Date) async {
         guard
             let statistics = await client.fetchStatistics(
                 for: .dietaryEnergyConsumed,
@@ -51,22 +54,24 @@ final class CaloriesViewModel {
             )
         else { return }
         self.statistics.removeAll()
-        self.weeklyTotal = 0
-        self.todayStatistics = nil
 
         let startDate = Calendar.current.date(byAdding: .day, value: -6, to: date)!
 
         statistics.enumerateStatistics(from: startDate, to: date) { [weak self] statistics, stop in
             guard let self else { return }
-
-            let value = statistics.sumQuantity()?.doubleValue(for: .kilocalorie()) ?? 0
-            self.weeklyTotal = self.weeklyTotal + value
-
             self.statistics.append(statistics)
-
-            if Calendar.current.startOfDay(for: statistics.endDate) == Calendar.current.startOfDay(for: .now) {
-                self.todayStatistics = statistics
-            }
         }
+    }
+
+    private func calculateWeeklyTotal() -> Double {
+        var total: Double = 0
+        for item in statistics {
+            total = total + item.extractedValue()
+        }
+        return total
+    }
+
+    private func getTodaySample() -> HKStatistics? {
+        return statistics.first(where: { $0.endDate.isToday })
     }
 }

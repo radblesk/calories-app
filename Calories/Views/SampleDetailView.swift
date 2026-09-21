@@ -11,13 +11,15 @@ import SwiftUI
 struct SampleDetailView: View {
     let sample: HKQuantitySample
 
+    @AppStorage("unit") private var unit: Unit = .kcal
+
     var body: some View {
         NavigationStack {
             List {
                 Section("Sample Details") {
                     SampleDetailRow(
                         title: "Dietary Energy",
-                        value: "\(sample.kilocalories()) kcal"
+                        value: "\(sample.formattedValue()) \(unit.unitExtension)"
                     )
                     SampleDetailRow(title: "Date", value: sample.endDate.formatted(date: .abbreviated, time: .shortened))
                     SampleDetailRow(title: "Source", value: sample.sourceRevision.source.name)
