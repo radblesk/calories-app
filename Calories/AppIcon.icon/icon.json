@@ -1,0 +1,51 @@
+{
+  "fill" : "automatic",
+  "groups" : [
+    {
+      "blur-material" : null,
+      "layers" : [
+        {
+          "image-name" : "Heart.svg",
+          "name" : "Heart",
+          "position" : {
+            "scale" : 0.81,
+            "translation-in-points" : [
+              0.22926218075008364,
+              24
+            ]
+          }
+        },
+        {
+          "image-name" : "circle.svg",
+          "name" : "circle",
+          "position" : {
+            "scale" : 0.9,
+            "translation-in-points" : [
+              0.5558220000000347,
+              -13.124555999999984
+            ]
+          }
+        }
+      ],
+      "lighting" : "individual",
+      "refractivity" : {
+        "depth" : 0,
+        "enabled" : false,
+        "strength" : 0.5
+      },
+      "shadow" : {
+        "kind" : "layer-color",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : [
+      "iOS"
+    ]
+  }
+}

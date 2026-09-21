@@ -6,7 +6,12 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F950AF1730618BA600844F44 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F950AF1630618BA600844F44 /* AppIcon.icon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		F950AF1630618BA600844F44 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; name = AppIcon.icon; path = Calories/AppIcon.icon; sourceTree = "<group>"; };
 		F995DD3D30603F1C00B69010 /* Calories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calories.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -30,6 +35,7 @@
 		F995DD3430603F1C00B69010 = {
 			isa = PBXGroup;
 			children = (
+				F950AF1630618BA600844F44 /* AppIcon.icon */,
 				F995DD3F30603F1C00B69010 /* Calories */,
 				F995DD3E30603F1C00B69010 /* Products */,
 			);
@@ -102,6 +108,7 @@
 		F995DD3B30603F1C00B69010 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
+				F950AF1730618BA600844F44 /* AppIcon.icon in Resources */,
 			);
 		};
 /* End PBXResourcesBuildPhase section */
