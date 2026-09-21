@@ -118,6 +118,21 @@ final class HealthStoreClient {
         }
     }
 
+    func fetchRecords(for identifier: HKQuantityTypeIdentifier) async -> [HKQuantitySample] {
+        guard let sampleType = HKObjectType.quantityType(forIdentifier: identifier), let healthStore else { return [] }
+        let predicate = HKSamplePredicate.quantitySample(type: sampleType)
+        let sortDescriptor = SortDescriptor<HKQuantitySample>(\.endDate, order: .reverse)
+        let descriptor = HKSampleQueryDescriptor(predicates: [predicate], sortDescriptors: [sortDescriptor])
+
+        do {
+            try await requestAuthorizationIfNeeded()
+            return try await descriptor.result(for: healthStore)
+        } catch {
+            errorQueue.append(HealthStoreClientError(title: "Failed to Query Sample Data", error: error))
+            return []
+        }
+    }
+
     func saveSample(for identifier: HKQuantityTypeIdentifier, unit: HKUnit, count: Double, at date: Date) async {
         guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else { return }
 
