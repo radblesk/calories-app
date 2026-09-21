@@ -35,6 +35,12 @@ struct SummaryView: View {
                     ChartBottomRow()
                 }
                 .listRowSeparator(.hidden)
+
+                Section {
+                    NavigationLink("Show All Data") {
+                        HistoricalDataView()
+                    }
+                }
             }
             .navigationTitle("Calories")
             .navigationBarTitleDisplayMode(.inline)
