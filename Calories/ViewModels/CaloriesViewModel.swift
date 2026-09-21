@@ -20,11 +20,16 @@ final class CaloriesViewModel {
     var todayStatistics: HKStatistics? = nil
     var caloriesConsumed: Double { todayStatistics?.sumQuantity()?.doubleValue(for: .kilocalorie()) ?? 0 }
     var caloriesRemaining: Double { max(calorieLimit - caloriesConsumed, 0) }
+
+    // Goals/Limits
+
+    var calorieLimit: Double {
+        UserDefaults.standard.object(forKey: "dailyLimit") as? Double ?? 1500
+    }
     var overLimit: Double? {
         let remaining = calorieLimit - caloriesConsumed
         return remaining < 0 ? abs(remaining) : nil
     }
-    var calorieLimit: Double = 1500
 
     // States
 

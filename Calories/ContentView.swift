@@ -17,7 +17,7 @@ struct ContentView: View {
                 SummaryView()
             }
             Tab("Settings", systemImage: "gear") {
-                Text("Settings View")
+                SettingsView()
             }
         }
         .tabViewStyle(.sidebarAdaptable)
