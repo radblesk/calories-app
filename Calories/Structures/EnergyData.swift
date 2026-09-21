@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct CalorieData: Identifiable, Equatable {
+struct EnergyData: Identifiable, Equatable {
     let id = UUID()
-    var kcal: Double? = nil
+    var value: Double? = nil
     var weight: Double? = nil
 }

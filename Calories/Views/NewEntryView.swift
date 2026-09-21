@@ -10,17 +10,37 @@ import SwiftUI
 struct NewEntryView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("unit") private var unit: Unit = .kcal
 
     @State private var newValue: Double? = nil
-    @State private var items: [CalorieData] = [.init()]
+    @State private var items: [EnergyData] = [.init()]
     @State private var newDate: Date = .now
     @FocusState private var isFocused: FocusedField?
 
     @State private var confirmClose: Bool = false
 
     enum FocusedField: Hashable {
-        case kcal(UUID)
+        case value(UUID)
         case weight(UUID)
+    }
+
+    private var navigationTitle: Text {
+        let value = newValue ?? 0
+        let formattedValue = value.formatted(.number.precision(.fractionLength(2)))
+        if value > 0 {
+            return Text("\(formattedValue) \(unit.unitExtension)")
+        } else {
+            return Text("")
+        }
+    }
+
+    private var navigationSubtitle: Text {
+        let value = newValue ?? 0
+        if value > 0 {
+            return Text("Total")
+        } else {
+            return Text("")
+        }
     }
 
     var body: some View {
@@ -66,25 +86,25 @@ struct NewEntryView: View {
                             .foregroundStyle(.gray)
                     }
 
-                    if let newValue {
-                        LabeledContent {
-                            Text("\(newValue.formatted(.number.precision(.fractionLength(2)))) kcal")
-                                .contentTransition(.numericText(value: newValue))
-                        } label: {
-                            Text("Total")
-                                .foregroundStyle(.gray)
-                        }
-                    }
+                    //                    if let newValue {
+                    //                        LabeledContent {
+                    //                            Text("\(newValue.formatted(.number.precision(.fractionLength(2)))) \(unit.unitExtension)")
+                    //                                .contentTransition(.numericText(value: newValue))
+                    //                        } label: {
+                    //                            Text("Total")
+                    //                                .foregroundStyle(.gray)
+                    //                        }
+                    //                    }
 
                     ForEach($items.enumerated(), id: \.element.id) { index, $item in
                         Section {
                             LabeledContent {
-                                TextField("", value: $item.kcal, format: .number)
+                                TextField("", value: $item.value, format: .number)
                                     .keyboardType(.decimalPad)
                                     .multilineTextAlignment(.trailing)
-                                    .focused($isFocused, equals: .kcal(item.id))
+                                    .focused($isFocused, equals: .value(item.id))
                             } label: {
-                                Text("kcal/100g")
+                                Text("\(unit.unitExtension)/100g")
                                     .foregroundStyle(.gray)
                             }
 
@@ -98,7 +118,7 @@ struct NewEntryView: View {
                                     .foregroundStyle(.gray)
                             }
                             .onChange(of: isFocused) { oldValue, newValue in
-                                if newValue == .kcal(item.id) || newValue == .weight(item.id) {
+                                if newValue == .value(item.id) || newValue == .weight(item.id) {
                                     withAnimation {
                                         proxy.scrollTo(item.id, anchor: .center)
                                     }
@@ -120,17 +140,20 @@ struct NewEntryView: View {
                     }
 
                     Button("Add Item", systemImage: "plus") {
-                        let item = CalorieData()
+                        let item = EnergyData()
                         withAnimation {
                             items.append(item)
                         } completion: {
                             withAnimation {
-                                isFocused = .kcal(item.id)
+                                isFocused = .value(item.id)
                                 proxy.scrollTo(item.id, anchor: .top)
                             }
                         }
                     }
                 }
+                .navigationTitle(navigationTitle)
+                .navigationSubtitle(navigationSubtitle)
+                .navigationBarTitleDisplayMode(.inline)
                 .environment(\.defaultMinListRowHeight, 0)
                 .scrollDismissesKeyboard(.interactively)
                 .toolbar {
@@ -159,21 +182,76 @@ struct NewEntryView: View {
                         .disabled(newValue == nil)
                     }
                 }
+                .safeAreaBar(
+                    edge: .bottom,
+                    content: {
+                        if isFocused != nil {
+                            HStack(spacing: 40) {
+                                Spacer()
+                                Button("Next", systemImage: "chevron.down") {
+                                    switch isFocused {
+                                    case .value(let uUID):
+                                        isFocused = .weight(uUID)
+                                    case .weight(let uUID):
+                                        guard let index = items.firstIndex(where: { $0.id == uUID }) else {
+                                            break
+                                        }
+
+                                        if index < items.count - 1 {
+                                            isFocused = .value(items[index + 1].id)
+                                        } else {
+                                            let item = EnergyData()
+                                            withAnimation {
+                                                items.append(item)
+                                            } completion: {
+                                                withAnimation {
+                                                    isFocused = .value(item.id)
+                                                    proxy.scrollTo(item.id, anchor: .top)
+                                                }
+                                            }
+                                        }
+                                    case nil:
+                                        break
+                                    }
+                                }
+                                Button("Previous", systemImage: "chevron.up") {
+                                    switch isFocused {
+                                    case .value(let uUID):
+                                        guard let index = items.firstIndex(where: { $0.id == uUID }) else {
+                                            break
+                                        }
+                                        if index > 0 {
+                                            isFocused = .weight(items[index - 1].id)
+                                        }
+                                    case .weight(let uUID):
+                                        isFocused = .value(uUID)
+                                    case nil:
+                                        break
+                                    }
+                                }
+                            }
+                            .imageScale(.large)
+                            .labelStyle(.iconOnly)
+                            .padding(.vertical)
+                            .padding(.horizontal, 24)
+                        }
+                    }
+                )
                 .onAppear {
-                    isFocused = .kcal(items[0].id)
+                    isFocused = .value(items[0].id)
                 }
                 .onChange(of: items) { _, newItems in
-                    countCalories(for: newItems)
+                    countEnergy(for: newItems)
                 }
             }
         }
         .interactiveDismissDisabled(newValue != nil)
     }
 
-    private func countCalories(for items: [CalorieData]) {
+    private func countEnergy(for items: [EnergyData]) {
         let values = items.compactMap { item -> Double? in
-            guard let calories = item.kcal, let weight = item.weight else { return nil }
-            return calories * (weight / 100)
+            guard let value = item.value, let weight = item.weight else { return nil }
+            return value * (weight / 100)
         }
 
         withAnimation {
