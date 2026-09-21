@@ -16,6 +16,12 @@
           }
         },
         {
+          "fill-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : "none"
+            }
+          ],
           "image-name" : "circle.svg",
           "name" : "circle",
           "position" : {
