@@ -147,4 +147,13 @@ final class HealthStoreClient {
             errorQueue.append(HealthStoreClientError(title: "Failed to save data", error: error))
         }
     }
+
+    func deleteSample(_ sample: HKQuantitySample) async {
+        do {
+            try await requestAuthorizationIfNeeded()
+            try await healthStore?.delete(sample)
+        } catch {
+            errorQueue.append(HealthStoreClientError(title: "Failed to delete data", error: error))
+        }
+    }
 }
