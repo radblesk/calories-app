@@ -14,20 +14,21 @@ final class CaloriesViewModel {
 
     // Data
 
+    /// Weekly
     var statistics: [HKStatistics] = []
     var weeklyTotal: Double { calculateWeeklyTotal() }
     var weeklyAverage: Double { calculateWeeklyAverage() }
+
+    /// Today
     var todayStatistics: [HKStatistics] = []
-    var caloriesConsumed: Double { todayStatistics.map { $0.extractedValue() }.reduce(0, +) }
+    var caloriesConsumed: Double { todayStatistics.map { $0.extractedValue(in: unit) }.reduce(0, +) }
     var caloriesRemaining: Double { max(calorieLimit - caloriesConsumed, 0) }
     var consumedProgress: Double { caloriesConsumed / calorieLimit }
     var overLimitProgress: Double { (overLimit ?? 0) / calorieLimit }
 
     // Goals/Limits
 
-    var calorieLimit: Double {
-        UserDefaults.standard.object(forKey: "dailyLimit") as? Double ?? 1500
-    }
+    var calorieLimit: Double { dailyLimit }
     var overLimit: Double? {
         let remaining = calorieLimit - caloriesConsumed
         return remaining < 0 ? abs(remaining) : nil
@@ -37,6 +38,13 @@ final class CaloriesViewModel {
 
     var addingData: Bool = false
 
+    // Settings
+
+    @ObservationIgnored
+    @AppStorage("dailyLimit") private var dailyLimit: Double = 1500
+    @ObservationIgnored
+    @AppStorage("unit") private var unit: Unit = .kcal
+
     // MARK: - Methods
 
     func saveCalories(_ count: Double, at date: Date) async {
@@ -45,17 +53,18 @@ final class CaloriesViewModel {
     }
 
     func getStatistics(for date: Date) async {
+        let weekAgo = Calendar.current.date(byAdding: .day, value: -6, to: date)!
+        let startDate = Calendar.current.startOfDay(for: weekAgo)
+
         guard
             let statistics = await client.fetchStatistics(
                 for: .dietaryEnergyConsumed,
-                from: Calendar.current.date(byAdding: .day, value: -7, to: date)!,
+                from: startDate,
                 to: nil,
                 interval: DateComponents(day: 1)
             )
         else { return }
         self.statistics.removeAll()
-
-        let startDate = Calendar.current.date(byAdding: .day, value: -6, to: date)!
 
         statistics.enumerateStatistics(from: startDate, to: date) { [weak self] statistics, stop in
             guard let self else { return }
@@ -84,7 +93,7 @@ final class CaloriesViewModel {
     private func calculateWeeklyTotal() -> Double {
         var total: Double = 0
         for item in statistics {
-            total = total + item.extractedValue()
+            total = total + item.extractedValue(in: unit)
         }
         return total
     }
@@ -92,13 +101,9 @@ final class CaloriesViewModel {
     private func calculateWeeklyAverage() -> Double {
         let values =
             statistics
-            .map { $0.extractedValue() }
+            .map { $0.extractedValue(in: unit) }
             .filter { !$0.isZero }
         guard !values.isEmpty else { return 0 }
         return values.reduce(0, +) / Double(values.count)
-    }
-
-    private func getTodaySample() -> HKStatistics? {
-        return statistics.first(where: { $0.endDate.isToday })
     }
 }

@@ -17,22 +17,24 @@ struct WeeklySummaryChart: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Chart(data, id: \.self) { item in
-                BarMark(
-                    x: .value("Date", item.endDate, unit: .day),
-                    y: .value("Calories", item.extractedValue()),
-                    width: .ratio(0.5)
-                )
-                .foregroundStyle(
-                    item.extractedValue() > viewModel.calorieLimit
-                        ? Color.red.gradient : Color.green.gradient
-                )
-                .opacity(item.endDate.isToday ? 1 : 0.3)
-                .clipShape(.capsule)
+            Chart {
+                ForEach(data, id: \.startDate) { item in
+                    BarMark(
+                        x: .value("Date", item.startDate, unit: .day),
+                        y: .value("Calories", item.extractedValue(in: unit)),
+                        width: .ratio(0.5)
+                    )
+                    .foregroundStyle(
+                        item.extractedValue(in: unit) > viewModel.calorieLimit
+                            ? Color.red.gradient : Color.green.gradient
+                    )
+                    .opacity(item.startDate.isToday ? 1 : 0.3)
+                    .clipShape(.capsule)
+                }
 
                 RuleMark(y: .value("Average", viewModel.weeklyAverage))
-                    .lineStyle(StrokeStyle(lineWidth: 0.5, dash: [3, 3]))
-                    .foregroundStyle(Color.green.secondary)
+                    .lineStyle(StrokeStyle(lineWidth: 0.5, lineCap: .round, dash: [3, 3]))
+                    .foregroundStyle(.green)
             }
             .chartXAxis {
                 AxisMarks(values: .stride(by: .day)) { value in

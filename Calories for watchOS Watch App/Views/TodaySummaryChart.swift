@@ -14,7 +14,7 @@ struct TodaySummaryChart: View {
     @Environment(CaloriesViewModel.self) private var viewModel
     @AppStorage("unit") private var unit: Unit = .kcal
 
-    var maxValue: Double { data.map { $0.extractedValue() }.max() ?? 0 }
+    var maxValue: Double { data.map { $0.extractedValue(in: unit) }.max() ?? 0 }
     var minimumBarValue: Double { maxValue * 0.03 }
 
     var body: some View {
@@ -22,13 +22,13 @@ struct TodaySummaryChart: View {
         let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 
         VStack(alignment: .leading, spacing: 0) {
-            Chart(data, id: \.endDate) { item in
+            Chart(data, id: \.startDate) { item in
                 BarMark(
                     x: .value(
                         "Time",
                         item.startDate..<item.endDate
                     ),
-                    y: .value("Calories", max(item.extractedValue(), minimumBarValue))
+                    y: .value("Calories", max(item.extractedValue(in: unit), minimumBarValue))
                 )
                 .foregroundStyle(.cyan.gradient)
                 .clipShape(.capsule)

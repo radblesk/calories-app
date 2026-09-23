@@ -28,7 +28,7 @@ struct HistoricalDataView: View {
                                     Text(sample.endDate.sampleFormattedDate())
                                 } label: {
                                     Label {
-                                        Text(sample.formattedValue())
+                                        Text(sample.formattedValue(in: unit))
                                     } icon: {
                                         Image(.caloriesIcon)
                                             .resizable()

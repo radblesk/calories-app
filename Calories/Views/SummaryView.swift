@@ -61,9 +61,11 @@ struct SummaryView: View {
                 }
             }
             .task {
+                await viewModel.getTodayStatistics(for: .now)
                 await viewModel.getStatistics(for: .now)
             }
             .refreshable {
+                await viewModel.getTodayStatistics(for: .now)
                 await viewModel.getStatistics(for: .now)
             }
             .sheet(isPresented: $viewModel.addingData) {

@@ -9,32 +9,23 @@ internal import HealthKit
 import SwiftUI
 
 extension HKQuantitySample {
-    func formattedValue(fractionLength: Int = 0, grouping: NumberFormatStyleConfiguration.Grouping = .automatic) -> String {
-        let unit =
-            UserDefaults.standard.string(forKey: "unit")
-            .flatMap(Unit.init(rawValue:)) ?? .kcal
-        return quantity.doubleValue(for: unit.hkUnit).formatted(.number.precision(.fractionLength(0...fractionLength)).grouping(grouping))
+    func formattedValue(in unit: Unit, fractionLength: Int = 0, grouping: NumberFormatStyleConfiguration.Grouping = .automatic) -> String {
+        return quantity.doubleValue(for: unit.hkUnit).formatted(.number.locale(Locale(identifier: "en_US")).precision(.fractionLength(0...fractionLength)).grouping(grouping))
     }
 }
 
 extension HKStatistics {
-    func formattedValue(fractionLength: Int = 0, grouping: NumberFormatStyleConfiguration.Grouping = .automatic) -> String {
-        let unit =
-            UserDefaults.standard.string(forKey: "unit")
-            .flatMap(Unit.init(rawValue:)) ?? .kcal
+    func formattedValue(in unit: Unit, fractionLength: Int = 0, grouping: NumberFormatStyleConfiguration.Grouping = .automatic) -> String {
         let value = sumQuantity()?.doubleValue(for: unit.hkUnit) ?? 0
-        return value.formatted(.number.precision(.fractionLength(0...fractionLength)).grouping(grouping))
+        return value.formatted(.number.locale(Locale(identifier: "en_US")).precision(.fractionLength(0...fractionLength)).grouping(grouping))
     }
-    func extractedValue() -> Double {
-        let unit =
-            UserDefaults.standard.string(forKey: "unit")
-            .flatMap(Unit.init(rawValue:)) ?? .kcal
+    func extractedValue(in unit: Unit, ) -> Double {
         return sumQuantity()?.doubleValue(for: unit.hkUnit) ?? 0
     }
 }
 
 extension Double {
     func formattedValue(fractionLength: Int = 0, grouping: NumberFormatStyleConfiguration.Grouping = .automatic) -> String {
-        return formatted(.number.precision(.fractionLength(0...fractionLength)).grouping(grouping))
+        return formatted(.number.locale(Locale(identifier: "en_US")).precision(.fractionLength(0...fractionLength)).grouping(grouping))
     }
 }

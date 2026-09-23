@@ -30,10 +30,6 @@ final class HealthStoreClient {
     @ObservationIgnored
     private var authorizationTask: Task<Void, Error>?
 
-    // Data
-
-    var consumedToday: HKStatistics? = nil
-
     // Availability
 
     var isUnavailable: Bool = false
@@ -91,6 +87,8 @@ final class HealthStoreClient {
         guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else { return nil }
 
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictEndDate)
+        let startOfDay = Calendar.current.startOfDay(for: .now)
+        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 
         do {
             try await requestAuthorizationIfNeeded()
@@ -99,7 +97,7 @@ final class HealthStoreClient {
                     quantityType: quantityType,
                     quantitySamplePredicate: predicate,
                     options: .cumulativeSum,
-                    anchorDate: .now,
+                    anchorDate: endOfDay,
                     intervalComponents: interval
                 )
                 query.initialResultsHandler = { _, statistics, error in

@@ -13,65 +13,56 @@ struct WeeklyChart: View {
     let data: [HKStatistics]
 
     @Environment(CaloriesViewModel.self) private var viewModel
-
-    var maxValue: Double {
-        let values = data.map { $0.extractedValue() }
-        let sorted = values.sorted()
-        return sorted.last ?? 0
-    }
-
-    var averageValue: Double {
-        let values = data.map { $0.extractedValue() }
-        let nonZeroValues = values.filter({ !$0.isZero })
-        let average = nonZeroValues.reduce(0, +) / Double(nonZeroValues.count)
-        return average
-    }
+    @AppStorage("unit") private var unit: Unit = .kcal
 
     var body: some View {
-        Chart(data, id: \.self) { item in
-            BarMark(
-                x: .value("Day", item.endDate, unit: .weekday),
-                y: .value("Calories", item.extractedValue()),
-                width: .ratio(0.5)
-            )
-            .foregroundStyle(
-                item.extractedValue() > viewModel.calorieLimit
-                    ? Color.pink.gradient : item.endDate.isToday ? Color.blue.gradient : Color.gray.gradient
-            )
-            .clipShape(.rect(cornerRadius: 4))
-            .annotation(position: .top) {
-                if item.extractedValue() > 0 {
-                    Text(item.formattedValue())
-                        .font(.caption2)
-                        .foregroundStyle(item.extractedValue() > viewModel.calorieLimit ? .pink : item.endDate.isToday ? .blue : .gray)
+        Chart {
+            ForEach(data, id: \.startDate) { item in
+                BarMark(
+                    x: .value("Day", item.startDate, unit: .weekday),
+                    y: .value("Calories", item.extractedValue(in: unit)),
+                    width: .ratio(0.5)
+                )
+                .foregroundStyle(
+                    item.extractedValue(in: unit) > viewModel.calorieLimit
+                        ? Color.orange.gradient : item.startDate.isToday ? Color.accent.gradient : Color.gray.gradient
+                )
+                .clipShape(.rect(cornerRadius: 4))
+                .annotation(position: .top) {
+                    if item.extractedValue(in: unit) > 0 {
+                        Text(item.formattedValue(in: unit))
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                            .foregroundStyle(
+                                item.extractedValue(in: unit) > viewModel.calorieLimit ? .orange : item.startDate.isToday ? .accent : .gray
+                            )
+                    }
                 }
+
             }
 
-            RuleMark(y: .value("Average", averageValue))
-                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
-                .foregroundStyle(.gray.opacity(0.1))
-                .annotation(position: .top, alignment: .leading) {
-                    Text("Average")
-                        .font(.footnote)
-                        .fontWeight(.medium)
-                        .foregroundStyle(.gray)
-                }
+            RuleMark(y: .value("Average", viewModel.weeklyAverage))
+                .lineStyle(StrokeStyle(lineWidth: 0.5, lineCap: .round, dash: [3, 3]))
+                .foregroundStyle(.accent)
         }
         .chartXAxis {
             AxisMarks(values: .stride(by: .day)) { value in
                 if value.as(Date.self)!.isToday {
-                    AxisGridLine()
-                        .foregroundStyle(.blue)
-                    AxisTick()
-                        .foregroundStyle(.blue)
                     AxisValueLabel(format: .dateTime.weekday(.abbreviated), centered: true)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.accent)
+                    AxisGridLine()
+                        .foregroundStyle(.accent)
+                    AxisTick()
+                        .foregroundStyle(.accent)
                 } else {
                     AxisValueLabel(format: .dateTime.weekday(.abbreviated), centered: true)
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, lineCap: .round))
+                        .foregroundStyle(Color.accent.gradient.tertiary)
+                    AxisTick(stroke: StrokeStyle(lineWidth: 0.5, lineCap: .round))
+                        .foregroundStyle(Color.accent.gradient.tertiary)
                 }
             }
         }
-        .chartXScale(range: .plotDimension(startPadding: 100))
         .chartYAxis(.hidden)
         .frame(height: 220)
     }
