@@ -23,7 +23,7 @@ struct SampleDetailView: View {
                     )
                     SampleDetailRow(title: "Date", value: sample.endDate.formatted(date: .abbreviated, time: .shortened))
                     SampleDetailRow(title: "Source", value: sample.sourceRevision.source.name)
-                    if let deviceName = sample.device?.name {
+                    if let deviceName = sample.sourceRevision.productType {
                         SampleDetailRow(title: "Device", value: deviceName)
                     }
                 }
