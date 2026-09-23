@@ -17,10 +17,10 @@ struct ChartInfoItem: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 2) {
-                Text("\(value.formattedValue(grouping: .never))/")
+                Text("\(value.formattedValue())/")
                     .font(.title)
                 VStack(alignment: .leading, spacing: -2) {
-                    Text(secondaryValue.formattedValue(grouping: .never))
+                    Text(secondaryValue.formattedValue())
                     Text(unit.unitExtension.uppercased())
                         .font(.footnote)
                 }

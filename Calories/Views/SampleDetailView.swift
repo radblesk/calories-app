@@ -19,7 +19,7 @@ struct SampleDetailView: View {
                 Section("Sample Details") {
                     SampleDetailRow(
                         title: "Dietary Energy",
-                        value: "\(sample.formattedValue()) \(unit.unitExtension)"
+                        value: "\(sample.formattedValue(in: unit)) \(unit.unitExtension)"
                     )
                     SampleDetailRow(title: "Date", value: sample.endDate.formatted(date: .abbreviated, time: .shortened))
                     SampleDetailRow(title: "Source", value: sample.sourceRevision.source.name)
