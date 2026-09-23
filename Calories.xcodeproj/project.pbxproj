@@ -45,7 +45,6 @@
 				Assets.xcassets,
 				Enumerations/FocusedField.swift,
 				Enumerations/Unit.swift,
-				Extensions/customTitle.swift,
 				Extensions/environments.swift,
 				Extensions/formattedValue.swift,
 				Extensions/isToday.swift,
