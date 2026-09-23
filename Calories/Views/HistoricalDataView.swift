@@ -15,27 +15,32 @@ struct HistoricalDataView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(unit.title) {
-                    ForEach(viewModel.data, id: \.self) { sample in
-                        NavigationLink {
-                            SampleDetailView(sample: sample)
-                        } label: {
-                            LabeledContent {
-                                Text(sample.endDate.sampleFormattedDate())
+                if viewModel.data.isEmpty {
+                    ContentUnavailableView("No data", systemImage: "heart.slash")
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } else {
+                    Section(unit.title) {
+                        ForEach(viewModel.data, id: \.self) { sample in
+                            NavigationLink {
+                                SampleDetailView(sample: sample)
                             } label: {
-                                Label {
-                                    Text(sample.formattedValue())
-                                } icon: {
-                                    Image(.caloriesIcon)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 26, height: 26)
-                                }
+                                LabeledContent {
+                                    Text(sample.endDate.sampleFormattedDate())
+                                } label: {
+                                    Label {
+                                        Text(sample.formattedValue())
+                                    } icon: {
+                                        Image(.caloriesIcon)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 26, height: 26)
+                                    }
 
+                                }
                             }
                         }
+                        .onDelete(perform: viewModel.remove)
                     }
-                    .onDelete(perform: viewModel.remove)
                 }
             }
             .navigationTitle("Historical Data")
