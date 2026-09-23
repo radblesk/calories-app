@@ -18,6 +18,7 @@ struct CaloriesApp: App {
         WindowGroup {
             ContentView()
                 .environments()
+                .fontDesign(.rounded)
         }
     }
 }
