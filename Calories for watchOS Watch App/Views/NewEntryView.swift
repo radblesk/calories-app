@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUI_Apple_Watch_Decimal_Pad
 
 struct NewEntryView: View {
     @Environment(CaloriesViewModel.self) private var calorieModel
