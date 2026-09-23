@@ -8,40 +8,11 @@
 import SwiftUI
 
 struct NewEntryView: View {
-    @Environment(CaloriesViewModel.self) private var viewModel
+    @Environment(CaloriesViewModel.self) private var calorieModel
+    @State private var viewModel = NewEntryViewModel()
     @Environment(\.dismiss) private var dismiss
     @AppStorage("unit") private var unit: Unit = .kcal
-
-    @State private var newValue: Double? = nil
-    @State private var items: [EnergyData] = [.init()]
-    @State private var newDate: Date = .now
     @FocusState private var isFocused: FocusedField?
-
-    @State private var confirmClose: Bool = false
-
-    enum FocusedField: Hashable {
-        case value(UUID)
-        case weight(UUID)
-    }
-
-    private var navigationTitle: Text {
-        let value = newValue ?? 0
-        let formattedValue = value.formatted(.number.precision(.fractionLength(2)))
-        if value > 0 {
-            return Text("\(formattedValue) \(unit.unitExtension)")
-        } else {
-            return Text("")
-        }
-    }
-
-    private var navigationSubtitle: Text {
-        let value = newValue ?? 0
-        if value > 0 {
-            return Text("Total")
-        } else {
-            return Text("")
-        }
-    }
 
     var body: some View {
         NavigationStack {
@@ -73,35 +44,26 @@ struct NewEntryView: View {
                     .listSectionSeparator(.hidden)
 
                     LabeledContent {
-                        DatePicker("", selection: $newDate, displayedComponents: .date)
+                        DatePicker("", selection: $viewModel.newDate, displayedComponents: .date)
                     } label: {
                         Text("Date")
                             .foregroundStyle(.gray)
                     }
 
                     LabeledContent {
-                        DatePicker("", selection: $newDate, displayedComponents: .hourAndMinute)
+                        DatePicker("", selection: $viewModel.newDate, displayedComponents: .hourAndMinute)
                     } label: {
                         Text("Time")
                             .foregroundStyle(.gray)
                     }
 
-                    //                    if let newValue {
-                    //                        LabeledContent {
-                    //                            Text("\(newValue.formatted(.number.precision(.fractionLength(2)))) \(unit.unitExtension)")
-                    //                                .contentTransition(.numericText(value: newValue))
-                    //                        } label: {
-                    //                            Text("Total")
-                    //                                .foregroundStyle(.gray)
-                    //                        }
-                    //                    }
-
-                    ForEach($items.enumerated(), id: \.element.id) { index, $item in
+                    ForEach($viewModel.items.enumerated(), id: \.element.id) { index, $item in
                         Section {
                             LabeledContent {
                                 TextField("", value: $item.value, format: .number)
                                     .keyboardType(.decimalPad)
                                     .multilineTextAlignment(.trailing)
+                                    .submitLabel(.next)
                                     .focused($isFocused, equals: .value(item.id))
                             } label: {
                                 Text("\(unit.unitExtension)/100g")
@@ -112,6 +74,7 @@ struct NewEntryView: View {
                                 TextField("", value: $item.weight, format: .number)
                                     .keyboardType(.decimalPad)
                                     .multilineTextAlignment(.trailing)
+                                    .submitLabel(.done)
                                     .focused($isFocused, equals: .weight(item.id))
                             } label: {
                                 Text("grams")
@@ -131,7 +94,7 @@ struct NewEntryView: View {
                                 if index > 0 {
                                     Button("Remove", role: .destructive) {
                                         _ = withAnimation {
-                                            items.remove(at: index)
+                                            viewModel.items.remove(at: index)
                                         }
                                     }
                                 }
@@ -140,32 +103,23 @@ struct NewEntryView: View {
                     }
 
                     Button("Add Item", systemImage: "plus") {
-                        let item = EnergyData()
-                        withAnimation {
-                            items.append(item)
-                        } completion: {
-                            withAnimation {
-                                isFocused = .value(item.id)
-                                proxy.scrollTo(item.id, anchor: .top)
-                            }
-                        }
+                        viewModel.addItem(proxy, focus: $isFocused)
                     }
                 }
-                .navigationTitle(navigationTitle)
-                .navigationSubtitle(navigationSubtitle)
+                .navigationTitle(viewModel.navigationTitle)
+                .navigationSubtitle(viewModel.navigationSubtitle)
                 .navigationBarTitleDisplayMode(.inline)
-                .environment(\.defaultMinListRowHeight, 0)
                 .scrollDismissesKeyboard(.interactively)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button(role: .close) {
-                            if newValue != nil {
-                                confirmClose.toggle()
+                            if viewModel.newValue != nil {
+                                viewModel.confirmClose.toggle()
                             } else {
                                 dismiss()
                             }
                         }
-                        .confirmationDialog("Close", isPresented: $confirmClose) {
+                        .confirmationDialog("Close", isPresented: $viewModel.confirmClose) {
                             Button("Discard", role: .destructive) {
                                 dismiss()
                             }
@@ -173,13 +127,13 @@ struct NewEntryView: View {
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button(role: .confirm) {
-                            guard let newValue else { return }
+                            guard let newValue = viewModel.newValue else { return }
                             Task {
-                                await viewModel.saveCalories(newValue, at: newDate)
+                                await calorieModel.saveCalories(newValue, at: viewModel.newDate)
                                 dismiss()
                             }
                         }
-                        .disabled(newValue == nil)
+                        .disabled(viewModel.newValue == nil)
                     }
                 }
                 .safeAreaBar(
@@ -189,45 +143,10 @@ struct NewEntryView: View {
                             HStack(spacing: 40) {
                                 Spacer()
                                 Button("Next", systemImage: "chevron.down") {
-                                    switch isFocused {
-                                    case .value(let uUID):
-                                        isFocused = .weight(uUID)
-                                    case .weight(let uUID):
-                                        guard let index = items.firstIndex(where: { $0.id == uUID }) else {
-                                            break
-                                        }
-
-                                        if index < items.count - 1 {
-                                            isFocused = .value(items[index + 1].id)
-                                        } else {
-                                            let item = EnergyData()
-                                            withAnimation {
-                                                items.append(item)
-                                            } completion: {
-                                                withAnimation {
-                                                    isFocused = .value(item.id)
-                                                    proxy.scrollTo(item.id, anchor: .top)
-                                                }
-                                            }
-                                        }
-                                    case nil:
-                                        break
-                                    }
+                                    viewModel.nextItem(proxy, focus: $isFocused)
                                 }
                                 Button("Previous", systemImage: "chevron.up") {
-                                    switch isFocused {
-                                    case .value(let uUID):
-                                        guard let index = items.firstIndex(where: { $0.id == uUID }) else {
-                                            break
-                                        }
-                                        if index > 0 {
-                                            isFocused = .weight(items[index - 1].id)
-                                        }
-                                    case .weight(let uUID):
-                                        isFocused = .value(uUID)
-                                    case nil:
-                                        break
-                                    }
+                                    viewModel.previousItem(proxy, focus: $isFocused)
                                 }
                             }
                             .imageScale(.large)
@@ -238,24 +157,10 @@ struct NewEntryView: View {
                     }
                 )
                 .onAppear {
-                    isFocused = .value(items[0].id)
-                }
-                .onChange(of: items) { _, newItems in
-                    countEnergy(for: newItems)
+                    isFocused = .value(viewModel.items[0].id)
                 }
             }
         }
-        .interactiveDismissDisabled(newValue != nil)
-    }
-
-    private func countEnergy(for items: [EnergyData]) {
-        let values = items.compactMap { item -> Double? in
-            guard let value = item.value, let weight = item.weight else { return nil }
-            return value * (weight / 100)
-        }
-
-        withAnimation {
-            newValue = values.isEmpty ? nil : values.reduce(0, +)
-        }
+        .interactiveDismissDisabled(viewModel.newValue != nil)
     }
 }
