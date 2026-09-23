@@ -20,7 +20,7 @@ struct NewEntryView: View {
                 List {
                     Section {
                         VStack {
-                            Image(systemName: "pizza.slice")
+                            Image(systemName: "fork.knife")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 30, height: 30)
