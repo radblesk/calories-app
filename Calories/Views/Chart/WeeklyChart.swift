@@ -14,39 +14,72 @@ struct WeeklyChart: View {
 
     @Environment(CaloriesViewModel.self) private var viewModel
 
+    var maxValue: Double {
+        let values = data.map { $0.extractedValue() }
+        let sorted = values.sorted()
+        return sorted.last ?? 0
+    }
+
+    var averageValue: Double {
+        let values = data.map { $0.extractedValue() }
+        let nonZeroValues = values.filter({ !$0.isZero })
+        let average = nonZeroValues.reduce(0, +) / Double(nonZeroValues.count)
+        return average
+    }
+
     var body: some View {
         Chart(data, id: \.self) { item in
             BarMark(
-                x: .value("Date", item.endDate, unit: .day),
-                y: .value("Calories", item.extractedValue())
+                x: .value("Day", item.endDate, unit: .weekday),
+                y: .value("Calories", item.extractedValue()),
+                width: .ratio(0.5)
             )
             .foregroundStyle(
                 item.extractedValue() > viewModel.calorieLimit
-                    ? Color.red.gradient : item.endDate.isToday ? Color.green.gradient : Color.gray.gradient
+                    ? Color.pink.gradient : item.endDate.isToday ? Color.blue.gradient : Color.gray.gradient
             )
-            .clipShape(.rect(cornerRadius: 8))
+            .clipShape(.rect(cornerRadius: 4))
             .annotation(position: .top) {
                 if item.extractedValue() > 0 {
                     Text(item.formattedValue())
                         .font(.caption2)
-                        .foregroundStyle(item.extractedValue() > viewModel.calorieLimit ? .red : .gray)
+                        .foregroundStyle(item.extractedValue() > viewModel.calorieLimit ? .pink : item.endDate.isToday ? .blue : .gray)
+                }
+            }
+
+            RuleMark(y: .value("Average", averageValue))
+                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                .foregroundStyle(.gray.opacity(0.1))
+                .annotation(position: .top, alignment: .leading) {
+                    Text("Average")
+                        .font(.footnote)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.gray)
+                }
+        }
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .day)) { value in
+                if value.as(Date.self)!.isToday {
+                    AxisGridLine()
+                        .foregroundStyle(.blue)
+                    AxisTick()
+                        .foregroundStyle(.blue)
+                    AxisValueLabel(format: .dateTime.weekday(.abbreviated), centered: true)
+                        .foregroundStyle(.blue)
+                } else {
+                    AxisValueLabel(format: .dateTime.weekday(.abbreviated), centered: true)
                 }
             }
         }
-        .chartXAxis {
-            AxisMarks(values: .stride(by: .day)) {
-                AxisGridLine(stroke: .init(lineWidth: 0.5, dash: [2, 2]))
-                    .foregroundStyle(Color(.systemGray5))
-                AxisValueLabel(format: .dateTime.weekday(.abbreviated))
-            }
-        }
-        .chartYAxis {
-            AxisMarks {
-                AxisGridLine()
-                    .foregroundStyle(Color(.systemGray6))
-                AxisValueLabel()
-            }
-        }
+        .chartXScale(range: .plotDimension(startPadding: 100))
+        .chartYAxis(.hidden)
         .frame(height: 220)
     }
+}
+
+#Preview {
+    SummaryView()
+        .environment(CaloriesViewModel())
+        .overlays()
+        .environments()
 }
