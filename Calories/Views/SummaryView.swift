@@ -48,6 +48,9 @@ struct SummaryView: View {
                         }
                     }
                     .pickerStyle(.navigationLink)
+                    .onChange(of: unit) { _, newValue in
+                        WatchSyncManager.shared.syncUnit(newValue)
+                    }
                 }
             }
             .navigationTitle("Calories")

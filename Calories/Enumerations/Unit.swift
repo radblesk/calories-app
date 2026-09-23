@@ -8,7 +8,7 @@
 internal import HealthKit
 import SwiftUI
 
-enum Unit: String, CaseIterable, Identifiable {
+enum Unit: String, CaseIterable, Identifiable, Codable {
     case cal, kcal, kj
 
     var id: String { self.rawValue }

@@ -7,23 +7,96 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F950AF1730618BA600844F44 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F950AF1630618BA600844F44 /* AppIcon.icon */; };
+		F957C3C63062A136007B022E /* Calories for watchOS Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = F957C3BC3062A136007B022E /* Calories for watchOS Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		F957C3C43062A136007B022E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F995DD3530603F1C00B69010 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F957C3BB3062A136007B022E;
+			remoteInfo = "Calories for watchOS Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F957C3CA3062A136007B022E /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolder = Product;
+			files = (
+				F957C3C63062A136007B022E /* Calories for watchOS Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		F950AF1630618BA600844F44 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; name = AppIcon.icon; path = Calories/AppIcon.icon; sourceTree = "<group>"; };
+		F957C3BC3062A136007B022E /* Calories for watchOS Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Calories for watchOS Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F995DD3D30603F1C00B69010 /* Calories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calories.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F957C3D93062A15F007B022E /* Exceptions for "Calories" folder in "Calories for watchOS Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIcon.icon,
+				Assets.xcassets,
+				Enumerations/FocusedField.swift,
+				Enumerations/Unit.swift,
+				Extensions/customTitle.swift,
+				Extensions/environments.swift,
+				Extensions/formattedValue.swift,
+				Extensions/isToday.swift,
+				Extensions/overlays.swift,
+				Extensions/sampleFormattedDate.swift,
+				Structures/EnergyData.swift,
+				Structures/HealthStoreClientConfirmation.swift,
+				Structures/HealthStoreClientError.swift,
+				ViewModels/CaloriesViewModel.swift,
+				ViewModels/HealthStoreClient.swift,
+				ViewModels/HistoricalDataViewModel.swift,
+				ViewModels/NewEntryViewModel.swift,
+				Views/HistoricalDataView.swift,
+				Views/SampleDetailView.swift,
+			);
+			target = F957C3BB3062A136007B022E /* Calories for watchOS Watch App */;
+		};
+		F9B3C1D33062D5AA005F903E /* Exceptions for "Calories for watchOS Watch App" folder in "Calories" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WatchSyncManager.swift,
+			);
+			target = F995DD3C30603F1C00B69010 /* Calories */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		F957C3BD3062A136007B022E /* Calories for watchOS Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F9B3C1D33062D5AA005F903E /* Exceptions for "Calories for watchOS Watch App" folder in "Calories" target */,
+			);
+			path = "Calories for watchOS Watch App";
+			sourceTree = "<group>";
+		};
 		F995DD3F30603F1C00B69010 /* Calories */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F957C3D93062A15F007B022E /* Exceptions for "Calories" folder in "Calories for watchOS Watch App" target */,
+			);
 			path = Calories;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		F957C3B93062A136007B022E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
 		F995DD3A30603F1C00B69010 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
@@ -35,8 +108,8 @@
 		F995DD3430603F1C00B69010 = {
 			isa = PBXGroup;
 			children = (
-				F950AF1630618BA600844F44 /* AppIcon.icon */,
 				F995DD3F30603F1C00B69010 /* Calories */,
+				F957C3BD3062A136007B022E /* Calories for watchOS Watch App */,
 				F995DD3E30603F1C00B69010 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -45,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				F995DD3D30603F1C00B69010 /* Calories.app */,
+				F957C3BC3062A136007B022E /* Calories for watchOS Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -52,6 +126,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		F957C3BB3062A136007B022E /* Calories for watchOS Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F957C3C73062A136007B022E /* Build configuration list for PBXNativeTarget "Calories for watchOS Watch App" */;
+			buildPhases = (
+				F957C3B83062A136007B022E /* Sources */,
+				F957C3B93062A136007B022E /* Frameworks */,
+				F957C3BA3062A136007B022E /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				F957C3BD3062A136007B022E /* Calories for watchOS Watch App */,
+			);
+			name = "Calories for watchOS Watch App";
+			productName = "Calories for watchOS Watch App";
+			productReference = F957C3BC3062A136007B022E /* Calories for watchOS Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 		F995DD3C30603F1C00B69010 /* Calories */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F995DD4830603F1D00B69010 /* Build configuration list for PBXNativeTarget "Calories" */;
@@ -59,8 +151,12 @@
 				F995DD3930603F1C00B69010 /* Sources */,
 				F995DD3A30603F1C00B69010 /* Frameworks */,
 				F995DD3B30603F1C00B69010 /* Resources */,
+				F957C3CA3062A136007B022E /* Embed Watch Content */,
 			);
 			buildRules = (
+			);
+			dependencies = (
+				F957C3C53062A136007B022E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				F995DD3F30603F1C00B69010 /* Calories */,
@@ -80,6 +176,9 @@
 				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 2700;
 				TargetAttributes = {
+					F957C3BB3062A136007B022E = {
+						CreatedOnToolsVersion = 27.0;
+					};
 					F995DD3C30603F1C00B69010 = {
 						CreatedOnToolsVersion = 27.0;
 					};
@@ -94,26 +193,38 @@
 			);
 			mainGroup = F995DD3430603F1C00B69010;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F995DD3E30603F1C00B69010 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				F995DD3C30603F1C00B69010 /* Calories */,
+				F957C3BB3062A136007B022E /* Calories for watchOS Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		F957C3BA3062A136007B022E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
 		F995DD3B30603F1C00B69010 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				F950AF1730618BA600844F44 /* AppIcon.icon in Resources */,
 			);
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F957C3B83062A136007B022E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 		F995DD3930603F1C00B69010 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
@@ -121,7 +232,92 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		F957C3C53062A136007B022E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F957C3BB3062A136007B022E /* Calories for watchOS Watch App */;
+			targetProxy = F957C3C43062A136007B022E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		F957C3C83062A136007B022E /* Debug configuration for PBXNativeTarget "Calories for watchOS Watch App" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Calories for watchOS Watch App/Calories for watchOS Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DZT7WAAW32;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Calories for watchOS";
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "This app does not access your clinical health records, but this permission is required by the system for HealthKit integration.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app requires access to your health data to read your daily calorie intake and help you track it against your limit.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app requires access to your health data to read your daily calorie intake and help you track it against your limit.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.radobley.Calories;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.radobley.Calories.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		F957C3C93062A136007B022E /* Release configuration for PBXNativeTarget "Calories for watchOS Watch App" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Calories for watchOS Watch App/Calories for watchOS Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DZT7WAAW32;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Calories for watchOS";
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "This app does not access your clinical health records, but this permission is required by the system for HealthKit integration.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app requires access to your health data to read your daily calorie intake and help you track it against your limit.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app requires access to your health data to read your daily calorie intake and help you track it against your limit.";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.radobley.Calories;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.radobley.Calories.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
 		F995DD4630603F1D00B69010 /* Debug configuration for PBXProject "Calories" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -337,6 +533,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F957C3C73062A136007B022E /* Build configuration list for PBXNativeTarget "Calories for watchOS Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F957C3C83062A136007B022E /* Debug configuration for PBXNativeTarget "Calories for watchOS Watch App" */,
+				F957C3C93062A136007B022E /* Release configuration for PBXNativeTarget "Calories for watchOS Watch App" */,
+			);
+			defaultConfigurationName = Release;
+		};
 		F995DD3830603F1C00B69010 /* Build configuration list for PBXProject "Calories" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

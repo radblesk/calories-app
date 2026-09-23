@@ -46,7 +46,9 @@ struct HistoricalDataView: View {
             .navigationTitle("Historical Data")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                EditButton()
+                #if !os(watchOS)
+                    EditButton()
+                #endif
             }
             .task {
                 await viewModel.fetchRecords(for: .dietaryEnergyConsumed)

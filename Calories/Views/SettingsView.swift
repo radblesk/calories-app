@@ -26,6 +26,12 @@ struct SettingsView: View {
                     }
                 }
             }
+            .onChange(of: dailyLimit) { _, newValue in
+                WatchSyncManager.shared.syncDailyLimit(newValue)
+            }
+            .onChange(of: unit) { _, newValue in
+                WatchSyncManager.shared.syncUnit(newValue)
+            }
         }
     }
 }

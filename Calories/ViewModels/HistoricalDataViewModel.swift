@@ -14,8 +14,11 @@ final class HistoricalDataViewModel {
 
     func fetchRecords(for identifier: HKQuantityTypeIdentifier) async {
         let results = await HealthStoreClient.shared.fetchRecords(for: identifier)
+        let bundleId = "com.radobley.Calories"
+        let watchBundleId = bundleId + ".watchkitapp"
         data = results.filter({ sample in
-            return sample.sourceRevision.source.bundleIdentifier == Bundle.main.bundleIdentifier
+            let sampleBundleId = sample.sourceRevision.source.bundleIdentifier
+            return sampleBundleId == bundleId || sampleBundleId == watchBundleId
         })
     }
 
@@ -23,9 +26,10 @@ final class HistoricalDataViewModel {
         Task {
             for offset in offsets {
                 let item = data[offset]
-                let appBundleIdentifier = Bundle.main.bundleIdentifier
+                let bundleId = "com.radobley.Calories"
+                let watchBundleId = bundleId + ".watchkitapp"
                 let itemSourceBundleIdentifier = item.sourceRevision.source.bundleIdentifier
-                guard appBundleIdentifier == itemSourceBundleIdentifier else { return }
+                guard bundleId == itemSourceBundleIdentifier || watchBundleId == itemSourceBundleIdentifier else { return }
                 data.removeAll(where: { $0 == item })
                 await HealthStoreClient.shared.deleteSample(item)
             }

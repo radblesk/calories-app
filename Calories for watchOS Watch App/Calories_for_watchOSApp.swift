@@ -1,14 +1,14 @@
 //
-//  CaloriesApp.swift
-//  Calories
+//  Calories_for_watchOSApp.swift
+//  Calories for watchOS Watch App
 //
-//  Created by Radoslav Bley on 20/09/2026.
+//  Created by Radoslav Bley on 22/09/2026.
 //
 
 import SwiftUI
 
 @main
-struct CaloriesApp: App {
+struct Calories_for_watchOS_Watch_AppApp: App {
 
     init() {
         _ = WatchSyncManager.shared
@@ -18,6 +18,7 @@ struct CaloriesApp: App {
         WindowGroup {
             ContentView()
                 .environments()
+                .fontDesign(.rounded)
         }
     }
 }
