@@ -87,10 +87,9 @@ final class HealthStoreClient {
         }
     }
 
-    func fetchStatistics(for identifier: HKQuantityTypeIdentifier, from startDate: Date, to endDate: Date?) async -> HKStatisticsCollection? {
+    func fetchStatistics(for identifier: HKQuantityTypeIdentifier, from startDate: Date, to endDate: Date?, interval: DateComponents) async -> HKStatisticsCollection? {
         guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else { return nil }
 
-        let daily = DateComponents(day: 1)
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictEndDate)
 
         do {
@@ -101,7 +100,7 @@ final class HealthStoreClient {
                     quantitySamplePredicate: predicate,
                     options: .cumulativeSum,
                     anchorDate: .now,
-                    intervalComponents: daily
+                    intervalComponents: interval
                 )
                 query.initialResultsHandler = { _, statistics, error in
                     if let error {

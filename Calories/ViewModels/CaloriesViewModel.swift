@@ -16,13 +16,12 @@ final class CaloriesViewModel {
 
     var statistics: [HKStatistics] = []
     var weeklyTotal: Double { calculateWeeklyTotal() }
-    var weeklyAverage: Double { weeklyTotal / 7 }
-    var todayStatistics: HKStatistics? { getTodaySample() }
-    var caloriesConsumed: Double {
-        todayStatistics?.sumQuantity()?.doubleValue(for: (UserDefaults.standard.string(forKey: "unit")
-            .flatMap(Unit.init(rawValue:)) ?? .kcal).hkUnit) ?? 0
-    }
+    var weeklyAverage: Double { calculateWeeklyAverage() }
+    var todayStatistics: [HKStatistics] = []
+    var caloriesConsumed: Double { todayStatistics.map { $0.extractedValue() }.reduce(0, +) }
     var caloriesRemaining: Double { max(calorieLimit - caloriesConsumed, 0) }
+    var consumedProgress: Double { caloriesConsumed / calorieLimit }
+    var overLimitProgress: Double { (overLimit ?? 0) / calorieLimit }
 
     // Goals/Limits
 
@@ -50,7 +49,8 @@ final class CaloriesViewModel {
             let statistics = await client.fetchStatistics(
                 for: .dietaryEnergyConsumed,
                 from: Calendar.current.date(byAdding: .day, value: -7, to: date)!,
-                to: nil
+                to: nil,
+                interval: DateComponents(day: 1)
             )
         else { return }
         self.statistics.removeAll()
@@ -63,12 +63,39 @@ final class CaloriesViewModel {
         }
     }
 
+    func getTodayStatistics(for date: Date) async {
+        let startOfDay = Calendar.current.startOfDay(for: date)
+        guard
+            let statistics = await client.fetchStatistics(
+                for: .dietaryEnergyConsumed,
+                from: startOfDay,
+                to: date,
+                interval: DateComponents(minute: 30)
+            )
+        else { return }
+        self.todayStatistics.removeAll()
+
+        statistics.enumerateStatistics(from: startOfDay, to: date) { [weak self] statistics, stop in
+            guard let self else { return }
+            self.todayStatistics.append(statistics)
+        }
+    }
+
     private func calculateWeeklyTotal() -> Double {
         var total: Double = 0
         for item in statistics {
             total = total + item.extractedValue()
         }
         return total
+    }
+
+    private func calculateWeeklyAverage() -> Double {
+        let values =
+            statistics
+            .map { $0.extractedValue() }
+            .filter { !$0.isZero }
+        guard !values.isEmpty else { return 0 }
+        return values.reduce(0, +) / Double(values.count)
     }
 
     private func getTodaySample() -> HKStatistics? {
