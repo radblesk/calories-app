@@ -86,5 +86,5 @@ struct NewEntryView: View {
 
 #Preview {
     NewEntryView()
-        .environment(CaloriesViewModel())
+        .environments()
 }

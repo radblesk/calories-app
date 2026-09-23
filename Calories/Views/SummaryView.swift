@@ -7,13 +7,15 @@
 
 internal import HealthKit
 import SwiftUI
+import WidgetKit
 
 struct SummaryView: View {
-    @State private var viewModel = CaloriesViewModel()
+    @Environment(CaloriesViewModel.self) private var viewModel
 
     @AppStorage("unit") private var unit: Unit = .kcal
 
     var body: some View {
+        @Bindable var viewModel = self.viewModel
         NavigationStack {
             List {
                 Section {
@@ -106,16 +108,17 @@ struct SummaryView: View {
             .task {
                 await viewModel.getTodayStatistics(for: .now)
                 await viewModel.getStatistics(for: .now)
+                WidgetCenter.shared.reloadTimelines(ofKind: "CaloriesRingsWidgets")
             }
             .refreshable {
                 await viewModel.getTodayStatistics(for: .now)
                 await viewModel.getStatistics(for: .now)
+                WidgetCenter.shared.reloadTimelines(ofKind: "CaloriesRingsWidgets")
             }
             .sheet(isPresented: $viewModel.addingData) {
                 NewEntryView()
             }
             .overlays()
-            .environment(viewModel)
         }
     }
 }

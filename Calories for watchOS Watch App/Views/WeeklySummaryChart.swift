@@ -67,7 +67,7 @@ struct WeeklySummaryChart: View {
 }
 
 #Preview {
-    @Previewable @State var viewModel = CaloriesViewModel()
+    @Previewable @State var viewModel = CaloriesViewModel.shared
 
     VStack {
         WeeklySummaryChart(data: viewModel.statistics)

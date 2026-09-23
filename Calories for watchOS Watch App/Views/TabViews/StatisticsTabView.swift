@@ -39,5 +39,5 @@ struct StatisticsTabView: View {
 
 #Preview {
     StatisticsTabView()
-        .environment(CaloriesViewModel())
+        .environments()
 }

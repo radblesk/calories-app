@@ -70,7 +70,6 @@ struct WeeklyChart: View {
 
 #Preview {
     SummaryView()
-        .environment(CaloriesViewModel())
         .overlays()
         .environments()
 }

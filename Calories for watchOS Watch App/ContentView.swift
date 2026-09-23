@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 struct ContentView: View {
-    @State private var viewModel = CaloriesViewModel()
+    @Environment(CaloriesViewModel.self) private var viewModel
     @State private var currentTab: ActiveTab = .rings
 
     var body: some View {
+        @Bindable var viewModel = self.viewModel
         NavigationStack {
             TabView(selection: $currentTab) {
                 ForEach(ActiveTab.visibleTabs) { tab in
@@ -28,11 +30,11 @@ struct ContentView: View {
             .task {
                 await viewModel.getStatistics(for: .now)
                 await viewModel.getTodayStatistics(for: .now)
+                WidgetCenter.shared.reloadTimelines(ofKind: "CaloriesRingsWidgets")
             }
             .sheet(isPresented: $viewModel.addingData) {
                 NewEntryView()
             }
-            .environment(viewModel)
             .overlays()
         }
     }

@@ -9,10 +9,12 @@ import SwiftUI
 
 struct Environments: ViewModifier {
     @State private var healthStoreClient = HealthStoreClient.shared
+    @State private var viewModel = CaloriesViewModel.shared
 
     func body(content: Content) -> some View {
         content
             .environment(healthStoreClient)
+            .environment(viewModel)
     }
 }
 

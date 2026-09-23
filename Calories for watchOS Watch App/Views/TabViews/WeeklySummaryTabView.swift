@@ -18,5 +18,5 @@ struct WeeklySummaryTabView: View {
 
 #Preview {
     WeeklySummaryTabView()
-        .environment(CaloriesViewModel())
+        .environments()
 }

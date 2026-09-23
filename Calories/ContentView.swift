@@ -18,7 +18,6 @@ struct ContentView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
-        .defaultTabBarPlacement(.sidebar)
         .overlays()
     }
 }

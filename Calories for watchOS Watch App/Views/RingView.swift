@@ -13,7 +13,7 @@ struct RingView: View {
     let level: Int
     let symbol: String?
 
-    let lineWidth: CGFloat = 20
+    private var lineWidth: CGFloat = 20
 
     var padding: CGFloat {
         if level > 1 {
@@ -82,6 +82,12 @@ struct RingView: View {
         )
         .padding(padding)
         .task(id: progress) {
+            guard !isWidget else {
+                displayCap = progress > 0
+                currentProgress = progress
+                return
+            }
+            
             try? await Task.sleep(for: .milliseconds(500))
 
             if progress > 0 {
@@ -108,11 +114,20 @@ struct RingView: View {
         let degrees = overlapProgress * 360.0
         return .degrees(-1 * degrees)
     }
-}
 
-#Preview {
-    ContentView()
-        .environments()
+    private var isWidget: Bool = false
+
+    func isWidget(_ enabled: Bool = true) -> Self {
+        var copy = self
+        copy.isWidget = enabled
+        return copy
+    }
+
+    func lineWidth(_ width: CGFloat) -> Self {
+        var copy = self
+        copy.lineWidth = width
+        return copy
+    }
 }
 
 #Preview {

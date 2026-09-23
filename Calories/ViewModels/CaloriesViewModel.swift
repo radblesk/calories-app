@@ -10,6 +10,9 @@ import SwiftUI
 
 @Observable
 final class CaloriesViewModel {
+    static let shared = CaloriesViewModel()
+    private init() {}
+
     let client = HealthStoreClient.shared
 
     // Data

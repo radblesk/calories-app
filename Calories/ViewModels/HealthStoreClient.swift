@@ -91,7 +91,7 @@ final class HealthStoreClient {
         let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 
         do {
-            try await requestAuthorizationIfNeeded()
+//            try await requestAuthorizationIfNeeded()
             return try await withCheckedThrowingContinuation { continuation in
                 let query = HKStatisticsCollectionQuery(
                     quantityType: quantityType,

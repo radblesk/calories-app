@@ -30,5 +30,5 @@ struct TodaySummaryTabView: View {
 
 #Preview {
     TodaySummaryTabView()
-        .environment(CaloriesViewModel())
+        .environments()
 }
