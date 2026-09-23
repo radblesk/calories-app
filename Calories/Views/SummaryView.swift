@@ -21,7 +21,6 @@ struct SummaryView: View {
                         HStack(spacing: 40) {
                             ChartTopRowItem(title: "Total", value: viewModel.weeklyTotal)
                             ChartTopRowItem(title: "Average", value: viewModel.weeklyAverage)
-                            ChartTopRowItem(title: "Daily Limit", value: viewModel.calorieLimit)
                         }
                         ChartRangeView {
                             if let firstDate = viewModel.statistics.first?.endDate {
