@@ -16,6 +16,40 @@ struct SummaryView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    VStack(spacing: 0) {
+                        Text(viewModel.caloriesConsumed.formattedValue())
+                            .font(.system(size: 84))
+                            .fontWeight(.semibold)
+                            .animation(.bouncy, value: viewModel.caloriesConsumed)
+
+                        Text("of \(viewModel.calorieLimit.formattedValue()) \(unit.unitExtension)")
+                            .foregroundStyle(Color(.systemGray2))
+                            .animation(.bouncy, value: viewModel.calorieLimit)
+
+                        ProgressBar(value: viewModel.caloriesConsumed, total: viewModel.calorieLimit)
+                            .frame(maxWidth: 300, maxHeight: 10)
+                            .padding(.vertical)
+
+                        Group {
+                            if let overLimit = viewModel.overLimit {
+                                Text("\(overLimit.formattedValue()) over limit")
+                                    .foregroundStyle(.orange.secondary)
+                            } else {
+                                Text("\(viewModel.caloriesRemaining.formattedValue()) remaining")
+                            }
+                        }
+                        .foregroundStyle(Color(.systemGray))
+                        .animation(.bouncy, value: viewModel.caloriesRemaining)
+                    }
+                    .contentTransition(.numericText())
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .foregroundStyle(.accent.gradient)
+                .listRowBackground(Color.clear)
+
                 Section("Weekly Stats") {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 40) {
@@ -33,7 +67,6 @@ struct SummaryView: View {
                         }
                     }
                     WeeklyChart(data: viewModel.statistics)
-                    ChartBottomRow()
                 }
                 .listRowSeparator(.hidden)
 
@@ -41,7 +74,7 @@ struct SummaryView: View {
                     NavigationLink("Show All Data") {
                         HistoricalDataView()
                     }
-                    Picker("Unit", selection: $unit) {
+                    Picker("Unit", selection: $unit.animation()) {
                         ForEach(Unit.allCases) { unit in
                             Text(unit.unitExtension)
                                 .tag(unit)
@@ -52,6 +85,16 @@ struct SummaryView: View {
                         WatchSyncManager.shared.syncUnit(newValue)
                     }
                 }
+            }
+            .scrollContentBackground(.hidden)
+            .background {
+                RadialGradient(
+                    colors: [Color.accentColor.opacity(0.2), Color(.systemGroupedBackground)],
+                    center: .top,
+                    startRadius: 0,
+                    endRadius: 500
+                )
+                .ignoresSafeArea()
             }
             .navigationTitle("Calories")
             .navigationBarTitleDisplayMode(.inline)
@@ -75,4 +118,9 @@ struct SummaryView: View {
             .environment(viewModel)
         }
     }
+}
+
+#Preview {
+    SummaryView()
+        .environments()
 }
