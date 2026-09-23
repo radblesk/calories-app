@@ -8,9 +8,6 @@
 import SwiftUI
 
 struct ContentView: View {
-
-    @State private var count: Double = 0
-
     var body: some View {
         TabView {
             Tab("Summary", systemImage: "heart") {
@@ -22,6 +19,7 @@ struct ContentView: View {
         }
         .tabViewStyle(.sidebarAdaptable)
         .defaultTabBarPlacement(.sidebar)
+        .overlays()
     }
 }
 
