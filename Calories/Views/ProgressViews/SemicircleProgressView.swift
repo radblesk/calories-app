@@ -9,6 +9,12 @@ import SwiftUI
 
 struct SemicircleProgressView: View {
     let progress: Double
+    let lineWidth: Double
+
+    init(progress: Double, lineWidth: Double = 27) {
+        self.progress = progress
+        self.lineWidth = lineWidth
+    }
 
     @State private var currentProgress: Double = 0
 
