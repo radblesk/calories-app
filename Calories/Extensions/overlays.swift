@@ -9,9 +9,11 @@ import SwiftUI
 
 struct Overlays: ViewModifier {
     @Environment(HealthStoreClient.self) private var healthStoreClient
+    @Environment(CaloriesViewModel.self) private var caloriesModel
 
     func body(content: Content) -> some View {
         @Bindable var healthStoreClient = self.healthStoreClient
+        @Bindable var caloriesModel = self.caloriesModel
         content
             .alert(healthStoreClient.currentError?.title ?? "Unknown Error", item: $healthStoreClient.currentError) { error in
                 Button(role: .close) {
@@ -22,7 +24,15 @@ struct Overlays: ViewModifier {
                     Text(error.localizedDescription)
                 }
             }
-
+            #if os(watchOS)
+                .fullScreenCover(isPresented: $caloriesModel.changingLimit) {
+                    ChangeLimitView()
+                }
+            #else
+                .sheet(isPresented: $caloriesModel.changingLimit) {
+                    ChangeLimitView()
+                }
+            #endif
     }
 }
 
