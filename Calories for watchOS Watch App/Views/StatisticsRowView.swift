@@ -25,7 +25,7 @@ struct StatisticsRowView: View {
             Text(title)
                 .foregroundStyle(.secondary)
 
-            Text(attributedValue)
+            Text(value > 0 ? attributedValue : "--")
                 .font(.title2)
         }
         .fontWeight(.medium)

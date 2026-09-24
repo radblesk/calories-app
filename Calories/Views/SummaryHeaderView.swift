@@ -16,12 +16,12 @@ struct SummaryHeaderView: View {
                 .frame(width: 300, height: 150)
 
             VStack(spacing: 20) {
-                VStack(spacing: -5) {
-                    Text(viewModel.caloriesConsumed.formattedValue())
-                        .font(.system(size: 84))
-                        .fontWeight(.semibold)
+                VStack(spacing: 0) {
+                    Text(viewModel.caloriesConsumed > 0 ? viewModel.caloriesConsumed.formattedValue() : "--")
+                        .font(.system(size: 52))
+                        .fontWeight(.heavy)
                         .animation(.bouncy, value: viewModel.caloriesConsumed)
-                        .foregroundStyle(.accent.gradient)
+//                        .foregroundStyle(.accent.gradient)
 
                     Text("of \(viewModel.calorieLimit.formattedValue()) \(viewModel.unit.unitExtension)")
                         .foregroundStyle(.secondary)
@@ -30,7 +30,7 @@ struct SummaryHeaderView: View {
                 }
 
                 Group {
-                    if let overLimit = viewModel.overLimit {
+                    if let overLimit = viewModel.overLimit, overLimit > 0 {
                         Text("\(overLimit.formattedValue()) over limit")
                             .foregroundStyle(.orange)
                     } else {
