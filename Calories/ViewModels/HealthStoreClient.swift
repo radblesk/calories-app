@@ -15,6 +15,9 @@ final class HealthStoreClient {
         if HKHealthStore.isHealthDataAvailable() {
             healthStore = HKHealthStore()
             isUnavailable = false
+            Task {
+                try? await requestAuthorizationIfNeeded()
+            }
         } else {
             errorQueue.append(HealthStoreClientError(title: "HealthKit is not available", error: nil))
             isUnavailable = true
