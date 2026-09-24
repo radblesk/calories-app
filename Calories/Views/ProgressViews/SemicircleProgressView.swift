@@ -15,11 +15,11 @@ struct SemicircleProgressView: View {
     var body: some View {
         ZStack {
             Semicircle()
-                .stroke(.accent.quinary, style: StrokeStyle(lineWidth: 27, lineCap: .round))
+                .stroke(.accent.quinary, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
 
             Semicircle()
                 .trim(from: 0, to: currentProgress)
-                .stroke(.accent.gradient, style: StrokeStyle(lineWidth: 27, lineCap: .round))
+                .stroke(.accent.gradient, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .shadow(color: .accent.opacity(0.4), radius: 6, y: 6)
         }
         .animation(.interactiveSpring(duration: 1.2), value: currentProgress)

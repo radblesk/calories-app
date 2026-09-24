@@ -19,9 +19,9 @@ enum ActiveTab: String, Identifiable {
         case .rings:
             .gray.opacity(0.5)
         case .todaySummary:
-            .cyan
+            .pink
         case .statistics:
-            .cyan
+            .pink
         case .weeklySummary:
             .green
         case .settings:

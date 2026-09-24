@@ -11,8 +11,8 @@ struct SummaryHeaderView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
 
     var body: some View {
-        VStack(spacing: -50) {
-            SemicircleProgressView(progress: viewModel.caloriesConsumed / viewModel.calorieLimit)
+        VStack(spacing: -30) {
+            SemicircleProgressView(progress: viewModel.consumedProgress, lineWidth: 32)
                 .frame(width: 300, height: 150)
 
             VStack(spacing: 20) {
