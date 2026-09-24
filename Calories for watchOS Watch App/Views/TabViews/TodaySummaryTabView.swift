@@ -9,7 +9,6 @@ import SwiftUI
 
 struct TodaySummaryTabView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
-    @AppStorage("dailyLimit") private var dailyLimit: Double = 1500
 
     var body: some View {
         TodaySummaryChart(data: viewModel.todayStatistics)
@@ -17,13 +16,10 @@ struct TodaySummaryTabView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Spacer()
-                    NumberField("Daily Limit", value: $dailyLimit) {
-                        Image(systemName: "plusminus.circle")
+                    Button("Change Limit", systemImage: "plusminus.circle") {
+                        viewModel.changingLimit.toggle()
                     }
                 }
-            }
-            .onChange(of: dailyLimit) { _, newValue in
-                WatchSyncManager.shared.syncDailyLimit(newValue)
             }
     }
 }

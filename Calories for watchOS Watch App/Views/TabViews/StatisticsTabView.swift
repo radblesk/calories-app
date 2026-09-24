@@ -9,7 +9,6 @@ import SwiftUI
 
 struct StatisticsTabView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
-    @State private var changingLimit: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -27,12 +26,9 @@ struct StatisticsTabView: View {
             ToolbarItemGroup(placement: .bottomBar) {
                 Spacer()
                 Button("Change Limit", systemImage: "plusminus.circle") {
-                    changingLimit.toggle()
+                    viewModel.changingLimit.toggle()
                 }
             }
-        }
-        .fullScreenCover(isPresented: $changingLimit) {
-            StepperView()
         }
     }
 }
