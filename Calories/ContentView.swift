@@ -9,16 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        TabView {
-            Tab("Summary", systemImage: "heart") {
-                SummaryView()
-            }
-            Tab("Settings", systemImage: "gear") {
-                SettingsView()
-            }
-        }
-        .tabViewStyle(.sidebarAdaptable)
-        .overlays()
+        SummaryView()
+            .overlays()
     }
 }
 
