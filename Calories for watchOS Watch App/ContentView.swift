@@ -32,9 +32,6 @@ struct ContentView: View {
                 await viewModel.getTodayStatistics(for: .now)
                 WidgetCenter.shared.reloadTimelines(ofKind: "CaloriesRingsWidgets")
             }
-            .sheet(isPresented: $viewModel.addingData) {
-                NewEntryView()
-            }
             .overlays()
         }
     }

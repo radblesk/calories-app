@@ -24,6 +24,9 @@ struct Overlays: ViewModifier {
                     Text(error.localizedDescription)
                 }
             }
+            .sheet(isPresented: $caloriesModel.addingData) {
+                NewEntryView()
+            }
             #if os(watchOS)
                 .fullScreenCover(isPresented: $caloriesModel.changingLimit) {
                     ChangeLimitView()

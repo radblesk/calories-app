@@ -66,9 +66,6 @@ struct SummaryView: View {
                 await viewModel.getStatistics(for: .now)
                 WidgetCenter.shared.reloadTimelines(ofKind: "CaloriesRingsWidgets")
             }
-            .sheet(isPresented: $viewModel.addingData) {
-                NewEntryView()
-            }
         }
     }
 
