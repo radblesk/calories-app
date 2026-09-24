@@ -8,24 +8,22 @@
 import SwiftUI
 
 struct SettingsTabView: View {
-    @AppStorage("unit") private var unit: Unit = .kcal
+    @Environment(CaloriesViewModel.self) private var viewModel
 
     var body: some View {
+        @Bindable var viewModel = self.viewModel
         VStack {
             NavigationLink("Show All Data") {
                 HistoricalDataView()
                     .containerBackground(.pink.gradient.secondary, for: .navigation)
             }
-            Picker("Unit", selection: $unit) {
+            Picker("Unit", selection: $viewModel.unit) {
                 ForEach(Unit.allCases) { unit in
                     Text(unit.unitExtension)
                         .tag(unit)
                 }
             }
             .pickerStyle(.navigationLink)
-        }
-        .onChange(of: unit) { _, newValue in
-            WatchSyncManager.shared.syncUnit(newValue)
         }
     }
 }

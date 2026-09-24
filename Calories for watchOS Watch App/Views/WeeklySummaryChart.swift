@@ -13,7 +13,6 @@ struct WeeklySummaryChart: View {
     let data: [HKStatistics]
 
     @Environment(CaloriesViewModel.self) private var viewModel
-    @AppStorage("unit") private var unit: Unit = .kcal
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -21,11 +20,11 @@ struct WeeklySummaryChart: View {
                 ForEach(data, id: \.startDate) { item in
                     BarMark(
                         x: .value("Date", item.startDate, unit: .day),
-                        y: .value("Calories", item.extractedValue(in: unit)),
+                        y: .value("Calories", item.extractedValue(in: viewModel.unit)),
                         width: .ratio(0.5)
                     )
                     .foregroundStyle(
-                        item.extractedValue(in: unit) > viewModel.calorieLimit
+                        item.extractedValue(in: viewModel.unit) > viewModel.calorieLimit
                             ? Color.red.gradient : Color.green.gradient
                     )
                     .opacity(item.startDate.isToday ? 1 : 0.3)

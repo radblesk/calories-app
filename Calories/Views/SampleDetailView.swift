@@ -10,8 +10,7 @@ import SwiftUI
 
 struct SampleDetailView: View {
     let sample: HKQuantitySample
-
-    @AppStorage("unit") private var unit: Unit = .kcal
+    @Environment(CaloriesViewModel.self) private var viewModel
 
     var body: some View {
         NavigationStack {
@@ -19,7 +18,7 @@ struct SampleDetailView: View {
                 Section("Sample Details") {
                     SampleDetailRow(
                         title: "Dietary Energy",
-                        value: "\(sample.formattedValue(in: unit)) \(unit.unitExtension)"
+                        value: "\(sample.formattedValue(in: viewModel.unit)) \(viewModel.unit.unitExtension)"
                     )
                     SampleDetailRow(title: "Date", value: sample.endDate.formatted(date: .abbreviated, time: .shortened))
                     SampleDetailRow(title: "Source", value: sample.sourceRevision.source.name)

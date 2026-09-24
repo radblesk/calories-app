@@ -10,7 +10,7 @@ import SwiftUI
 
 struct HistoricalDataView: View {
     @State private var viewModel = HistoricalDataViewModel()
-    @AppStorage("unit") private var unit: Unit = .kcal
+    @Environment(CaloriesViewModel.self) private var caloriesModel
 
     var body: some View {
         NavigationStack {
@@ -19,7 +19,7 @@ struct HistoricalDataView: View {
                     ContentUnavailableView("No data", systemImage: "heart.slash")
                         .frame(maxWidth: .infinity, alignment: .center)
                 } else {
-                    Section(unit.title) {
+                    Section(caloriesModel.unit.title) {
                         ForEach(viewModel.data, id: \.self) { sample in
                             NavigationLink {
                                 SampleDetailView(sample: sample)
@@ -28,7 +28,7 @@ struct HistoricalDataView: View {
                                     Text(sample.endDate.sampleFormattedDate())
                                 } label: {
                                     Label {
-                                        Text(sample.formattedValue(in: unit))
+                                        Text(sample.formattedValue(in: caloriesModel.unit))
                                     } icon: {
                                         Image(.caloriesIcon)
                                             .resizable()

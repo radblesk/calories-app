@@ -10,7 +10,7 @@ import WidgetKit
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> CalorieEntry {
-        CalorieEntry(date: Date(), consumed: 1250, limit: 1500, overLimit: 0)
+        CalorieEntry(date: Date(), consumed: 0, limit: 1500, overLimit: 0, unit: .kcal)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (CalorieEntry) -> Void) {
@@ -28,13 +28,14 @@ struct Provider: TimelineProvider {
 
     private func loadEntry() async -> CalorieEntry {
         let store = CaloriesViewModel.shared
+        store.loadPersistedSettings()
         await store.getTodayStatistics(for: .now)
 
         let consumed = store.caloriesConsumed
         let limit = store.calorieLimit
         let overLimit = store.overLimit
 
-        return CalorieEntry(date: .now, consumed: consumed, limit: limit, overLimit: overLimit)
+        return CalorieEntry(date: .now, consumed: consumed, limit: limit, overLimit: overLimit, unit: store.unit)
     }
 }
 
@@ -44,6 +45,7 @@ struct CalorieEntry: TimelineEntry {
     let consumed: Double
     let limit: Double
     let overLimit: Double?
+    let unit: Unit
 }
 
 struct CaloriesRingsWidgetsEntryView: View {
@@ -70,9 +72,9 @@ struct CaloriesRingsWidgetsEntryView: View {
                     Spacer()
 
                     VStack(alignment: .leading, spacing: 6) {
-                        Label("\(entry.consumed.formattedValue()) kcal", systemImage: "fork.knife")
+                        Label("\(entry.consumed.formattedValue()) \(entry.unit.unitExtension)", systemImage: "fork.knife")
                             .foregroundStyle(.cyan)
-                        Label("\((max(entry.limit - entry.consumed, 0)).formattedValue()) kcal", systemImage: "arrow.up")
+                        Label("\((max(entry.limit - entry.consumed, 0)).formattedValue()) \(entry.unit.unitExtension)", systemImage: "arrow.up")
                             .foregroundStyle(.green)
                         if let overLimit = entry.overLimit, overLimit > 0 {
                             Label(overLimit.formattedValue(), systemImage: "plus")
@@ -100,9 +102,9 @@ struct CaloriesRingsWidgetsEntryView: View {
                     .padding()
 
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("\(entry.consumed.formattedValue()) kcal")
+                        Text("\(entry.consumed.formattedValue()) \(entry.unit.unitExtension)")
                             .foregroundStyle(.cyan)
-                        Text("\((max(entry.limit - entry.consumed, 0)).formattedValue()) kcal")
+                        Text("\((max(entry.limit - entry.consumed, 0)).formattedValue()) \(entry.unit.unitExtension)")
                             .foregroundStyle(.green)
                         if let overLimit = entry.overLimit, overLimit > 0 {
                             Text(overLimit.formattedValue())
@@ -125,9 +127,9 @@ struct CaloriesRingsWidgetsEntryView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("\(entry.consumed.formattedValue()) kcal")
+                        Text("\(entry.consumed.formattedValue()) \(entry.unit.unitExtension)")
                             .foregroundStyle(.cyan)
-                        Text("\((max(entry.limit - entry.consumed, 0)).formattedValue()) kcal")
+                        Text("\((max(entry.limit - entry.consumed, 0)).formattedValue()) \(entry.unit.unitExtension)")
                             .foregroundStyle(.green)
                         if let overLimit = entry.overLimit, overLimit > 0 {
                             Text(overLimit.formattedValue())
@@ -163,7 +165,7 @@ struct CaloriesRingsWidgetsEntryView: View {
             #endif
 
         case .accessoryInline:
-            Text("\(entry.consumed.formattedValue())/\((max(entry.limit - entry.consumed, 0)).formattedValue())kcal")
+            Text("\(entry.consumed.formattedValue())/\((max(entry.limit - entry.consumed, 0)).formattedValue()) \(entry.unit.unitExtension)")
                 .privacySensitive()
 
         #if os(watchOS)
@@ -210,5 +212,5 @@ struct CaloriesRingsWidgets: Widget {
 #Preview(as: .accessoryRectangular) {
     CaloriesRingsWidgets()
 } timeline: {
-    CalorieEntry(date: .now, consumed: 1850, limit: 1500, overLimit: nil)
+    CalorieEntry(date: .now, consumed: 1850, limit: 1500, overLimit: nil, unit: .kcal)
 }

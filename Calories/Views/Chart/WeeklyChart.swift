@@ -13,28 +13,27 @@ struct WeeklyChart: View {
     let data: [HKStatistics]
 
     @Environment(CaloriesViewModel.self) private var viewModel
-    @AppStorage("unit") private var unit: Unit = .kcal
 
     var body: some View {
         Chart {
             ForEach(data, id: \.startDate) { item in
                 BarMark(
                     x: .value("Day", item.startDate, unit: .weekday),
-                    y: .value("Calories", item.extractedValue(in: unit)),
+                    y: .value("Calories", item.extractedValue(in: viewModel.unit)),
                     width: .ratio(0.5)
                 )
                 .foregroundStyle(
-                    item.extractedValue(in: unit) > viewModel.calorieLimit
-                        ? Color.orange.gradient : item.startDate.isToday ? Color.accent.gradient : Color.gray.gradient
+                    item.extractedValue(in: viewModel.unit) > viewModel.calorieLimit
+                        ? Color.orange.gradient : item.startDate.isToday ? Color.accent.gradient : Color.accent.opacity(0.2).gradient
                 )
                 .clipShape(.rect(cornerRadius: 4))
                 .annotation(position: .top) {
-                    if item.extractedValue(in: unit) > 0 {
-                        Text(item.formattedValue(in: unit))
+                    if item.extractedValue(in: viewModel.unit) > 0 {
+                        Text(item.formattedValue(in: viewModel.unit))
                             .font(.caption2)
                             .fontWeight(.medium)
                             .foregroundStyle(
-                                item.extractedValue(in: unit) > viewModel.calorieLimit ? .orange : item.startDate.isToday ? .accent : .gray
+                                item.extractedValue(in: viewModel.unit) > viewModel.calorieLimit ? .orange : item.startDate.isToday ? .accent : .gray
                             )
                     }
                 }

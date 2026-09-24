@@ -28,7 +28,7 @@ final class NewEntryViewModel {
     // Helpers
 
     @ObservationIgnored
-    @AppStorage("unit") var unit: Unit = .kcal
+    let unit = CaloriesViewModel.shared.unit
 
     var navigationTitle: Text {
         let value = newValue ?? 0

@@ -12,9 +12,8 @@ import SwiftUI
 struct TodaySummaryChart: View {
     let data: [HKStatistics]
     @Environment(CaloriesViewModel.self) private var viewModel
-    @AppStorage("unit") private var unit: Unit = .kcal
 
-    var maxValue: Double { data.map { $0.extractedValue(in: unit) }.max() ?? 0 }
+    var maxValue: Double { data.map { $0.extractedValue(in: viewModel.unit) }.max() ?? 0 }
     var minimumBarValue: Double { maxValue * 0.03 }
 
     var body: some View {
@@ -28,7 +27,7 @@ struct TodaySummaryChart: View {
                         "Time",
                         item.startDate..<item.endDate
                     ),
-                    y: .value("Calories", max(item.extractedValue(in: unit), minimumBarValue))
+                    y: .value("Calories", max(item.extractedValue(in: viewModel.unit), minimumBarValue))
                 )
                 .foregroundStyle(.cyan.gradient)
                 .clipShape(.capsule)

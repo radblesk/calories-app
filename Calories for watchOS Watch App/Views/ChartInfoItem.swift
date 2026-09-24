@@ -12,7 +12,7 @@ struct ChartInfoItem: View {
     let secondaryValue: Double
     let tertiaryValue: Double
 
-    @AppStorage("unit") private var unit: Unit = .kcal
+    @Environment(CaloriesViewModel.self) private var viewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -21,7 +21,7 @@ struct ChartInfoItem: View {
                     .font(.title)
                 VStack(alignment: .leading, spacing: -2) {
                     Text(secondaryValue.formattedValue())
-                    Text(unit.unitExtension.uppercased())
+                    Text(viewModel.unit.unitExtension.uppercased())
                         .font(.footnote)
                 }
                 .padding(.top, 2)

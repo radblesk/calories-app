@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct NewEntryView: View {
-    @Environment(CaloriesViewModel.self) private var calorieModel
+    @Environment(CaloriesViewModel.self) private var caloriesModel
     @State private var viewModel = NewEntryViewModel()
     @Environment(\.dismiss) private var dismiss
-    @AppStorage("unit") private var unit: Unit = .kcal
     @FocusState private var isFocused: FocusedField?
 
     var body: some View {
@@ -66,7 +65,7 @@ struct NewEntryView: View {
                                     .submitLabel(.next)
                                     .focused($isFocused, equals: .value(item.id))
                             } label: {
-                                Text("\(unit.unitExtension)/100g")
+                                Text("\(caloriesModel.unit.unitExtension)/100g")
                                     .foregroundStyle(.gray)
                             }
 
@@ -129,7 +128,7 @@ struct NewEntryView: View {
                         Button(role: .confirm) {
                             guard let newValue = viewModel.newValue else { return }
                             Task {
-                                await calorieModel.saveCalories(newValue, at: viewModel.newDate)
+                                await caloriesModel.saveCalories(newValue, at: viewModel.newDate)
                                 dismiss()
                             }
                         }

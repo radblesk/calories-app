@@ -9,7 +9,6 @@ import SwiftUI
 
 struct RingsTabView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
-    @AppStorage("unit") private var unit: Unit = .kcal
 
     var body: some View {
         ZStack {
@@ -24,7 +23,7 @@ struct RingsTabView: View {
                     .fontWeight(.medium)
                     .fontDesign(.rounded)
                     .foregroundStyle(viewModel.overLimit == nil ? .primary : Color.red)
-                Text(unit.unitExtension)
+                Text(viewModel.unit.unitExtension)
                     .foregroundStyle(.secondary)
                     .font(.footnote)
             }

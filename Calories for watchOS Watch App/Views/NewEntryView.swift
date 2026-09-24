@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct NewEntryView: View {
-    @Environment(CaloriesViewModel.self) private var calorieModel
+    @Environment(CaloriesViewModel.self) private var caloriesModel
     @State private var viewModel = NewEntryViewModel()
     @Environment(\.dismiss) private var dismiss
-    @AppStorage("unit") var unit: Unit = .kcal
     @FocusState private var isFocused: FocusedField?
 
     @State private var newValueString: String = ""
@@ -22,14 +21,9 @@ struct NewEntryView: View {
         NavigationStack {
             ScrollViewReader { proxy in
                 List {
-                    Section {
-                        DatePicker("Date", selection: $viewModel.newDate, displayedComponents: .date)
-                        DatePicker("Time", selection: $viewModel.newDate, displayedComponents: .hourAndMinute)
-                    }
-
                     ForEach($viewModel.items.enumerated(), id: \.element.id) { index, $item in
                         Section("Item \(index + 1)") {
-                            NumberField("\(unit.unitExtension)/100g", value: $item.value)
+                            NumberField("\(caloriesModel.unit.unitExtension)/100g", value: $item.value)
                             NumberField("grams", value: $item.weight)
                         }
                     }
@@ -56,7 +50,7 @@ struct NewEntryView: View {
                         Button(role: .confirm) {
                             guard let value = viewModel.newValue else { return }
                             Task {
-                                await calorieModel.saveCalories(value, at: viewModel.newDate)
+                                await caloriesModel.saveCalories(value, at: viewModel.newDate)
                                 dismiss()
                             }
                         }

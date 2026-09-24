@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StatisticsTabView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
-    @AppStorage("dailyLimit") private var dailyLimit: Double = 1500
+    @State private var changingLimit: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -26,13 +26,13 @@ struct StatisticsTabView: View {
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
                 Spacer()
-                NumberField("Daily Limit", value: $dailyLimit) {
-                    Image(systemName: "plusminus.circle")
+                Button("Change Limit", systemImage: "plusminus.circle") {
+                    changingLimit.toggle()
                 }
             }
         }
-        .onChange(of: dailyLimit) { _, newValue in
-            WatchSyncManager.shared.syncDailyLimit(newValue)
+        .fullScreenCover(isPresented: $changingLimit) {
+            StepperView()
         }
     }
 }

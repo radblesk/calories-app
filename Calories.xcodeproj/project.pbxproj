@@ -136,6 +136,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Views/RingView.swift,
+				WatchSyncManager.swift,
 			);
 			target = F9E720983064058000E78CDC /* Calories WidgetsExtension Watch */;
 		};
@@ -143,6 +144,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Views/RingView.swift,
+				WatchSyncManager.swift,
 			);
 			target = F9FF11833064211400E195FD /* Calories WidgetsExtension */;
 		};

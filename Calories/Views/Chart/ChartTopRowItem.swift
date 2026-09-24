@@ -11,11 +11,11 @@ struct ChartTopRowItem: View {
     let title: String
     let value: Double
 
-    @AppStorage("unit") private var unit: Unit = .kcal
+    @Environment(CaloriesViewModel.self) private var viewModel
 
     var attributedValue: AttributedString {
         let value = AttributedString(value.formatted(.number.precision(.fractionLength(0))))
-        var unit = AttributedString(unit.unitExtension)
+        var unit = AttributedString(viewModel.unit.unitExtension)
         unit.foregroundColor = .gray
         return value + " " + unit
     }

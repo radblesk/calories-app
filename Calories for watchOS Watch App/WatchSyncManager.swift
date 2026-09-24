@@ -49,15 +49,11 @@ final class WatchSyncManager: NSObject, WCSessionDelegate {
         _ session: WCSession,
         didReceiveApplicationContext applicationContext: [String: Any]
     ) {
-        if let dailyLimit = applicationContext["dailyLimit"] as? Double {
-            DispatchQueue.main.async {
-                UserDefaults.standard.set(dailyLimit, forKey: "dailyLimit")
-            }
-        }
-        if let unit = applicationContext["unit"] as? String {
-            DispatchQueue.main.async {
-                UserDefaults.standard.set(unit, forKey: "unit")
-            }
+        let dailyLimit = applicationContext["dailyLimit"] as? Double
+        let unit = (applicationContext["unit"] as? String).flatMap(Unit.init(rawValue:))
+
+        DispatchQueue.main.async {
+            CaloriesViewModel.shared.applyRemoteSettings(dailyLimit: dailyLimit, unit: unit)
         }
     }
 
@@ -68,6 +64,12 @@ final class WatchSyncManager: NSObject, WCSessionDelegate {
     ) {
         if let error {
             print("WCSession activation error:", error)
+            return
+        }
+
+        if activationState == .activated {
+            syncDailyLimit(CaloriesViewModel.shared.calorieLimit)
+            syncUnit(CaloriesViewModel.shared.unit)
         }
     }
 

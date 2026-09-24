@@ -11,10 +11,10 @@ struct StatisticsRowView: View {
     let title: String
     let value: Double
 
-    @AppStorage("unit") private var unit: Unit = .kcal
+    @Environment(CaloriesViewModel.self) private var viewModel
 
     var attributedValue: AttributedString {
-        var suffix = AttributedString(unit.unitExtension)
+        var suffix = AttributedString(viewModel.unit.unitExtension)
         suffix.foregroundColor = .secondary
         let value = AttributedString(value.formatted(.number.precision(.fractionLength(fractionLength))))
         return value + " " + suffix
