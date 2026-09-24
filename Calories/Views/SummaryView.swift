@@ -104,7 +104,7 @@ struct SummaryView: View {
 
     @ContentBuilder
     private var landscapeView: some View {
-        HStack {
+        HStack(spacing: 30) {
             List {
                 Section("Weekly Stats") {
                     WeeklyStatsView()
@@ -116,12 +116,13 @@ struct SummaryView: View {
                 }
             }
             .headerProminence(.increased)
-
-            .frame(maxWidth: .infinity)
             .scrollEdgeEffectStyle(.soft, for: .top)
+            .scrollIndicators(.hidden)
+            .frame(maxWidth: .infinity)
 
             SummaryHeaderView()
                 .frame(maxWidth: .infinity)
+                .offset(y: 30)
         }
     }
 
