@@ -37,7 +37,6 @@ struct CustomStepper: View {
                 .font(.system(size: 64))
                 .fontDesign(.rounded)
                 .contentTransition(.numericText(value: value))
-                .animation(.bouncy, value: value)
                 .frame(width: 200)
 
             StepperButton {
@@ -59,11 +58,13 @@ struct CustomStepper: View {
     }
 
     private func updateValue(_ direction: StepperDirection) {
-        switch direction {
-        case .decrease:
-            value -= step
-        case .increase:
-            value += step
+        withAnimation(.bouncy) {
+            switch direction {
+            case .decrease:
+                value -= step
+            case .increase:
+                value += step
+            }
         }
     }
 }
