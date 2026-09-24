@@ -18,17 +18,20 @@ struct ChangeLimitView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 Text("Daily Limit")
-                    .foregroundStyle(.cyan)
+                    .foregroundStyle(.pink)
                     .padding(.bottom, 4)
+                    .fontWeight(.medium)
 
-                Stepper(value.formattedValue(), value: $value, step: 10)
+                Stepper(value.formattedValue(), value: $value.animation(), step: 10)
                     .controlSize(.small)
                     .padding(.horizontal)
+                    .contentTransition(.numericText(value: value))
 
                 Text(viewModel.unit.title.uppercased())
-                    .foregroundStyle(.cyan)
+                    .foregroundStyle(.pink)
+                    .fontWeight(.medium)
 
-                Spacer()
+                Spacer(minLength: 0)
 
                 Button("Set") {
                     viewModel.calorieLimit = value
@@ -37,10 +40,11 @@ struct ChangeLimitView: View {
                 .buttonStyle(.borderedProminent)
                 .foregroundStyle(.black)
                 .padding(.bottom)
+                .fontWeight(.bold)
+                .padding(.bottom, -30)
             }
-            .ignoresSafeArea(edges: .bottom)
-            .tint(.cyan)
-            .containerBackground(.cyan.gradient.tertiary, for: .navigation)
+            .tint(.pink)
+            .containerBackground(.pink.gradient.tertiary, for: .navigation)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "xmark", role: .cancel) {
@@ -57,4 +61,5 @@ struct ChangeLimitView: View {
 
 #Preview {
     ChangeLimitView()
+        .environments()
 }

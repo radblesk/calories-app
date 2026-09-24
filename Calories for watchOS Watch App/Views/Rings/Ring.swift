@@ -1,5 +1,5 @@
 //
-//  RingView.swift
+//  Ring.swift
 //  Calories
 //
 //  Created by Radoslav Bley on 22/09/2026.
@@ -7,17 +7,33 @@
 
 import SwiftUI
 
-struct RingView: View {
+struct Ring: View {
     let progress: CGFloat
-    let color: Color
     let level: Int
-    let symbol: String?
 
     private var lineWidth: CGFloat = 20
+    private var color: Color {
+        switch level {
+        case 1: .pink
+        case 2: .yellow
+        default: .green
+        }
+    }
+
+    private var showSymbol: Bool = false
+    private var symbol: String {
+        switch level {
+        case 1: "fork.knife"
+        case 2: "chevron.right.dotted.chevron.right"
+        case 3: "scalemass"
+        default: ""
+        }
+    }
 
     var padding: CGFloat {
+        let spacing: CGFloat = isWidget ? 1 : 2
         if level > 1 {
-            return lineWidth * CGFloat(level - 1) + 2
+            return (lineWidth + spacing) * CGFloat(level - 1)
         }
 
         return 0
@@ -30,7 +46,7 @@ struct RingView: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(color.opacity(0.15), lineWidth: lineWidth)
+                .stroke(color.opacity(0.2), lineWidth: lineWidth)
                 .animation(.none, value: currentProgress)
 
             Circle()
@@ -45,9 +61,9 @@ struct RingView: View {
                 .fill(color)
                 .background {
                     Circle()
-                        .fill(.black.quaternary)
-                        .blur(radius: 4)
-                        .offset(x: -lineWidth / 4)
+                        .fill(.black.quinary)
+                        .blur(radius: 2)
+                        .offset(x: -lineWidth / 6)
                         .mask {
                             Rectangle()
                                 .offset(x: -lineWidth / 2)
@@ -56,7 +72,7 @@ struct RingView: View {
                 .scaleEffect(displayCap ? 1 : 0.75)
                 .opacity(displayCap ? 1 : 0)
                 .overlay {
-                    if let symbol {
+                    if showSymbol {
                         Image(systemName: symbol)
                             .resizable()
                             .scaledToFit()
@@ -87,7 +103,7 @@ struct RingView: View {
                 currentProgress = progress
                 return
             }
-            
+
             try? await Task.sleep(for: .milliseconds(500))
 
             if progress > 0 {
@@ -128,17 +144,27 @@ struct RingView: View {
         copy.lineWidth = width
         return copy
     }
+
+    func showSymbol(_ enabled: Bool = true) -> Self {
+        var copy = self
+        copy.showSymbol = enabled
+        return copy
+    }
 }
 
 #Preview {
     @Previewable @State var progress: Double = 0
     ZStack {
-        RingView(progress: progress, color: .cyan, level: 1, symbol: "fork.knife")
-        RingView(progress: progress / 3, color: .pink, level: 2, symbol: "pizza.slice")
+        Ring(progress: progress, level: 1)
+            .showSymbol()
+        Ring(progress: progress / 3, level: 2)
+            .showSymbol()
+        Ring(progress: progress / 4, level: 3)
+            .showSymbol()
             .task {
                 progress = 1.2
-                try? await Task.sleep(for: .seconds(5))
-                progress = 0
+                //                try? await Task.sleep(for: .seconds(5))
+                //                progress = 0
             }
     }
 }

@@ -29,7 +29,7 @@ struct TodaySummaryChart: View {
                     ),
                     y: .value("Calories", max(item.extractedValue(in: viewModel.unit), minimumBarValue))
                 )
-                .foregroundStyle(.cyan.gradient)
+                .foregroundStyle(.pink.gradient)
                 .clipShape(.capsule)
             }
             .chartXScale(domain: startOfDay...endOfDay)
@@ -37,9 +37,9 @@ struct TodaySummaryChart: View {
                 AxisMarks(values: .stride(by: .hour, count: 6)) {
                     AxisValueLabel(format: .dateTime.hour())
                     AxisGridLine()
-                        .foregroundStyle(Color.cyan.gradient.quaternary)
+                        .foregroundStyle(Color.pink.gradient.quaternary)
                     AxisTick()
-                        .foregroundStyle(Color.cyan.gradient.quaternary)
+                        .foregroundStyle(Color.pink.gradient.quaternary)
                 }
             }
             .chartYAxis(.hidden)
@@ -47,7 +47,7 @@ struct TodaySummaryChart: View {
             .padding(.bottom, 20)
 
             ChartInfoItem(value: viewModel.caloriesConsumed, secondaryValue: viewModel.calorieLimit, tertiaryValue: viewModel.consumedProgress)
-                .foregroundStyle(.cyan)
+                .foregroundStyle(.pink)
         }
         .padding(16)
         .padding(.bottom, -50)

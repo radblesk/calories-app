@@ -12,12 +12,13 @@ struct RingsTabView: View {
 
     var body: some View {
         ZStack {
-            RingView(progress: viewModel.consumedProgress, color: .cyan, level: 1, symbol: "fork.knife")
-
-            RingView(progress: viewModel.overLimitProgress, color: .pink, level: 2, symbol: "chevron.right.dotted.chevron.right")
+            Ring(progress: viewModel.consumedProgress, level: 1)
+                .showSymbol()
+            Ring(progress: viewModel.overLimitProgress, level: 2)
+                .showSymbol()
 
             VStack {
-                Text(viewModel.caloriesRemaining.formattedValue())
+                Text(viewModel.caloriesRemaining > 0 ? viewModel.caloriesRemaining.formattedValue() : "--")
                     .contentTransition(.numericText(value: viewModel.caloriesRemaining))
                     .animation(.bouncy, value: viewModel.caloriesRemaining)
                     .fontWeight(.medium)

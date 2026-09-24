@@ -136,22 +136,3 @@ extension ButtonStyle where Self == NumpadButtonStyle {
 extension ButtonStyle where Self == NumpadButtonStyle {
     static var numpadProminent: NumpadButtonStyle { .init(isProminent: true) }
 }
-
-#Preview {
-    NavigationStack {
-        NumberInputView(placeholder: "something", value: .constant(24.5), style: .decimal)
-            .overlay(alignment: .top) {
-                HStack(alignment: .top) {
-                    Button("", systemImage: "xmark") {}
-                    Text("23:00")
-                    Button("", systemImage: "checkmark") {}
-                }
-                .labelStyle(.iconOnly)
-                .buttonStyle(.glass)
-                .buttonBorderShape(.circle)
-                .controlSize(.mini)
-                .padding(.top, 10)
-                .ignoresSafeArea()
-            }
-    }
-}
