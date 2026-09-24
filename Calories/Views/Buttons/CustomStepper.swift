@@ -31,6 +31,7 @@ struct CustomStepper: View {
                     }
                     .compositingGroup()
             }
+            .disabled(value == 0)
 
             Text(value.formattedValue())
                 .font(.system(size: 64))

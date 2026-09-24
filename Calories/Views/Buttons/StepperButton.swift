@@ -14,6 +14,8 @@ struct StepperButton<Label: View>: View {
     let generator = UIImpactFeedbackGenerator()
     @State private var task: Task<Void, Never>?
 
+    @Environment(\.isEnabled) private var isEnabled
+
     var body: some View {
         label()
             .contentShape(.rect)
@@ -21,6 +23,7 @@ struct StepperButton<Label: View>: View {
 
             } onPressingChanged: { isPressing in
                 if isPressing {
+                    guard isEnabled else { return }
                     action()
                     generator.impactOccurred()
                     startRepeating()
@@ -29,7 +32,7 @@ struct StepperButton<Label: View>: View {
                     task = nil
                 }
             }
-            .opacity(task != nil ? 0.7 : 1)
+            .opacity(!isEnabled ? 0.5 : task != nil ? 0.7 : 1)
             .scaleEffect(task != nil ? 0.95 : 1)
             .animation(.bouncy, value: task)
     }
