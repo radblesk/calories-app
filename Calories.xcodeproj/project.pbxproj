@@ -127,7 +127,7 @@
 		F9B3C1D33062D5AA005F903E /* Exceptions for "Calories for watchOS Watch App" folder in "Calories" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Views/RingView.swift,
+				Views/Rings/Ring.swift,
 				WatchSyncManager.swift,
 			);
 			target = F995DD3C30603F1C00B69010 /* Calories */;
@@ -135,7 +135,7 @@
 		F9BF5F4E3064355C0088142C /* Exceptions for "Calories for watchOS Watch App" folder in "Calories WidgetsExtension Watch" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Views/RingView.swift,
+				Views/Rings/Ring.swift,
 				WatchSyncManager.swift,
 			);
 			target = F9E720983064058000E78CDC /* Calories WidgetsExtension Watch */;
@@ -143,7 +143,7 @@
 		F9BF5F4F3064355C0088142C /* Exceptions for "Calories for watchOS Watch App" folder in "Calories WidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Views/RingView.swift,
+				Views/Rings/Ring.swift,
 				WatchSyncManager.swift,
 			);
 			target = F9FF11833064211400E195FD /* Calories WidgetsExtension */;
@@ -177,12 +177,14 @@
 		F9FF119A3064211500E195FD /* Exceptions for "Calories" folder in "Calories WidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
 				Enumerations/Unit.swift,
 				Extensions/formattedValue.swift,
 				Structures/HealthStoreClientConfirmation.swift,
 				Structures/HealthStoreClientError.swift,
 				ViewModels/CaloriesViewModel.swift,
 				ViewModels/HealthStoreClient.swift,
+				Views/ProgressViews/SemicircleProgressView.swift,
 			);
 			target = F9FF11833064211400E195FD /* Calories WidgetsExtension */;
 		};

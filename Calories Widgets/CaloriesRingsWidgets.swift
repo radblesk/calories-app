@@ -48,6 +48,27 @@ struct CalorieEntry: TimelineEntry {
     let unit: Unit
 }
 
+struct SmallWidgetRow: View {
+    let title: String
+    let symbol: String
+    let value: Double?
+
+    var body: some View {
+        HStack {
+            Image(systemName: symbol)
+                .symbolRenderingMode(.hierarchical)
+            Text(title)
+            Spacer()
+            if let value, value > 0 {
+                Text(value.formattedValue())
+            } else {
+                Text("--")
+            }
+        }
+        .privacySensitive()
+    }
+}
+
 struct CaloriesRingsWidgetsEntryView: View {
     var entry: Provider.Entry
 
@@ -57,45 +78,57 @@ struct CaloriesRingsWidgetsEntryView: View {
         switch family {
         #if os(iOS)
             case .systemSmall:
-                VStack(alignment: .leading) {
-                    ZStack {
-                        RingView(progress: entry.consumed / entry.limit, color: .cyan, level: 1, symbol: nil)
-                            .isWidget()
-                            .lineWidth(10)
-                        RingView(progress: (entry.overLimit ?? 0) / entry.limit, color: .pink, level: 2, symbol: nil)
-                            .isWidget()
-                            .lineWidth(10)
-                    }
-                    .frame(maxHeight: 60)
-                    .widgetAccentable()
+                VStack(alignment: .leading, spacing: 10) {
+                    VStack(spacing: -10) {
+                        SemicircleProgressView(progress: entry.consumed / entry.limit, lineWidth: 18)
 
-                    Spacer()
-
-                    VStack(alignment: .leading, spacing: 6) {
-                        Label("\(entry.consumed.formattedValue()) \(entry.unit.unitExtension)", systemImage: "fork.knife")
-                            .foregroundStyle(.cyan)
-                        Label("\((max(entry.limit - entry.consumed, 0)).formattedValue()) \(entry.unit.unitExtension)", systemImage: "arrow.up")
-                            .foregroundStyle(.green)
-                        if let overLimit = entry.overLimit, overLimit > 0 {
-                            Label(overLimit.formattedValue(), systemImage: "plus")
-                                .foregroundStyle(.pink)
-                        }
+                        Text(entry.consumed > 0 ? entry.consumed.formattedValue() : "--")
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
                     }
-                    .fontWeight(.medium)
-                    .fontDesign(.rounded)
-                    .privacySensitive()
+                    .padding(.horizontal, 10)
+
+                    Spacer(minLength: 0)
+
+                    SmallWidgetRow(title: "Remaining", symbol: "fork.knife", value: entry.limit - entry.consumed)
+                        .font(.caption2)
+                    SmallWidgetRow(title: "Over Limit", symbol: "chevron.right.dotted.chevron.right", value: entry.overLimit)
+                        .font(.caption2)
                 }
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+            case .systemMedium:
+                HStack(spacing: 20) {
+                    VStack(spacing: -10) {
+                        SemicircleProgressView(progress: entry.consumed / entry.limit, lineWidth: 18)
+
+                        Text(entry.consumed > 0 ? entry.consumed.formattedValue() : "--")
+                            .fontWeight(.medium)
+                            .fontDesign(.rounded)
+                    }
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 150)
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        SmallWidgetRow(title: "Remaining", symbol: "fork.knife", value: entry.limit - entry.consumed)
+                        SmallWidgetRow(title: "Over Limit", symbol: "chevron.right.dotted.chevron.right", value: entry.overLimit)
+                    }
+                    .font(.footnote)
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+
         #endif
 
         case .accessoryRectangular:
             #if os(watchOS)
                 HStack {
                     ZStack {
-                        RingView(progress: entry.consumed / entry.limit, color: .cyan, level: 1, symbol: nil)
+                        Ring(progress: entry.consumed / entry.limit, level: 1)
                             .isWidget()
                             .lineWidth(8)
-                        RingView(progress: (entry.overLimit ?? 0) / entry.limit, color: .pink, level: 2, symbol: nil)
+                        Ring(progress: (entry.overLimit ?? 0) / entry.limit, level: 2)
                             .isWidget()
                             .lineWidth(8)
                     }
@@ -118,22 +151,20 @@ struct CaloriesRingsWidgetsEntryView: View {
             #else
                 HStack(spacing: 12) {
                     ZStack {
-                        RingView(progress: entry.consumed / entry.limit, color: .cyan, level: 1, symbol: nil)
+                        Ring(progress: entry.consumed / entry.limit, level: 1)
                             .isWidget()
-                            .lineWidth(8)
-                        RingView(progress: (entry.overLimit ?? 0) / entry.limit, color: .pink, level: 2, symbol: nil)
+                            .lineWidth(10)
+                        Ring(progress: (entry.overLimit ?? 0) / entry.limit, level: 2)
                             .isWidget()
-                            .lineWidth(8)
+                            .lineWidth(10)
                     }
+                    .frame(maxWidth: 50)
 
                     VStack(alignment: .leading, spacing: 0) {
                         Text("\(entry.consumed.formattedValue()) \(entry.unit.unitExtension)")
-                            .foregroundStyle(.cyan)
                         Text("\((max(entry.limit - entry.consumed, 0)).formattedValue()) \(entry.unit.unitExtension)")
-                            .foregroundStyle(.green)
                         if let overLimit = entry.overLimit, overLimit > 0 {
                             Text(overLimit.formattedValue())
-                                .foregroundStyle(.pink)
                         }
                     }
                     .privacySensitive()
@@ -143,10 +174,10 @@ struct CaloriesRingsWidgetsEntryView: View {
         case .accessoryCircular:
             #if os(watchOS)
                 ZStack {
-                    RingView(progress: entry.consumed / entry.limit, color: .cyan, level: 1, symbol: nil)
+                    Ring(progress: entry.consumed / entry.limit, level: 1)
                         .isWidget()
                         .lineWidth(8)
-                    RingView(progress: (entry.overLimit ?? 0) / entry.limit, color: .pink, level: 2, symbol: nil)
+                    Ring(progress: (entry.overLimit ?? 0) / entry.limit, level: 2)
                         .isWidget()
                         .lineWidth(8)
                 }
@@ -154,10 +185,10 @@ struct CaloriesRingsWidgetsEntryView: View {
                 .widgetAccentable()
             #else
                 ZStack {
-                    RingView(progress: entry.consumed / entry.limit, color: .cyan, level: 1, symbol: nil)
+                    Ring(progress: entry.consumed / entry.limit, level: 1)
                         .isWidget()
                         .lineWidth(8)
-                    RingView(progress: (entry.overLimit ?? 0) / entry.limit, color: .pink, level: 2, symbol: nil)
+                    Ring(progress: (entry.overLimit ?? 0) / entry.limit, level: 2)
                         .isWidget()
                         .lineWidth(8)
                 }
@@ -196,7 +227,10 @@ struct CaloriesRingsWidgets: Widget {
                 #if os(watchOS)
                     .containerBackground(.fill.tertiary, for: .widget)
                 #else
-                    .containerBackground(.black.gradient, for: .widget)
+                    .containerBackground(
+                        LinearGradient(colors: [.accent.mix(with: .black, by: 0.6), .black], startPoint: .top, endPoint: .bottom),
+                        for: .widget
+                    )
                 #endif
         }
         .configurationDisplayName("Calories Rings")
@@ -204,7 +238,7 @@ struct CaloriesRingsWidgets: Widget {
         #if os(watchOS)
             .supportedFamilies([.accessoryRectangular, .accessoryCircular, .accessoryInline, .accessoryCorner])
         #elseif os(iOS)
-            .supportedFamilies([.accessoryCircular, .accessoryInline, .accessoryRectangular, .systemSmall])
+            .supportedFamilies([.accessoryCircular, .accessoryInline, .accessoryRectangular, .systemSmall, .systemMedium])
         #endif
     }
 }
@@ -212,5 +246,5 @@ struct CaloriesRingsWidgets: Widget {
 #Preview(as: .accessoryRectangular) {
     CaloriesRingsWidgets()
 } timeline: {
-    CalorieEntry(date: .now, consumed: 1850, limit: 1500, overLimit: nil, unit: .kcal)
+    CalorieEntry(date: .now, consumed: 1850, limit: 1500, overLimit: 300, unit: .kcal)
 }
