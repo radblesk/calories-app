@@ -11,98 +11,49 @@ import WidgetKit
 
 struct SummaryView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
-
-    @AppStorage("unit") private var unit: Unit = .kcal
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var offset: Double = 0
 
     var body: some View {
         @Bindable var viewModel = self.viewModel
         NavigationStack {
-            List {
-                Section {
-                    VStack(spacing: 0) {
-                        Text(viewModel.caloriesConsumed.formattedValue())
-                            .font(.system(size: 84))
-                            .fontWeight(.semibold)
-                            .animation(.bouncy, value: viewModel.caloriesConsumed)
-
-                        Text("of \(viewModel.calorieLimit.formattedValue()) \(unit.unitExtension)")
-                            .foregroundStyle(Color(.systemGray2))
-                            .animation(.bouncy, value: viewModel.calorieLimit)
-
-                        ProgressBar(value: viewModel.caloriesConsumed, total: viewModel.calorieLimit)
-                            .frame(maxWidth: 300, maxHeight: 10)
-                            .padding(.vertical)
-
-                        Group {
-                            if let overLimit = viewModel.overLimit {
-                                Text("\(overLimit.formattedValue()) over limit")
-                                    .foregroundStyle(.orange.secondary)
-                            } else {
-                                Text("\(viewModel.caloriesRemaining.formattedValue()) remaining")
-                            }
-                        }
-                        .foregroundStyle(Color(.systemGray))
-                        .animation(.bouncy, value: viewModel.caloriesRemaining)
-                    }
-                    .contentTransition(.numericText())
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                }
-                .foregroundStyle(.accent.gradient)
-                .listRowBackground(Color.clear)
-
-                Section("Weekly Stats") {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack(spacing: 40) {
-                            ChartTopRowItem(title: "Total", value: viewModel.weeklyTotal)
-                            ChartTopRowItem(title: "Average", value: viewModel.weeklyAverage)
-                        }
-                        ChartRangeView {
-                            if let firstDate = viewModel.statistics.first?.endDate {
-                                Text(firstDate.formatted(.dateTime.day().month()))
-                            }
-                            if let lastDate = viewModel.statistics.last?.endDate {
-                                Text(lastDate.formatted(.dateTime.day().month()))
-                            }
-                            Text(Calendar.current.component(.year, from: .now).formatted(.number.grouping(.never)))
-                        }
-                    }
-                    WeeklyChart(data: viewModel.statistics)
-                }
-                .listRowSeparator(.hidden)
-
-                Section {
-                    NavigationLink("Show All Data") {
-                        HistoricalDataView()
-                    }
-                    Picker("Unit", selection: $unit.animation()) {
-                        ForEach(Unit.allCases) { unit in
-                            Text(unit.unitExtension)
-                                .tag(unit)
-                        }
-                    }
-                    .pickerStyle(.navigationLink)
-                    .onChange(of: unit) { _, newValue in
-                        WatchSyncManager.shared.syncUnit(newValue)
-                    }
-                }
+            AdaptiveView {
+                portraitView
+            } secondary: {
+                landscapeView
             }
             .scrollContentBackground(.hidden)
-            .background {
-                RadialGradient(
-                    colors: [Color.accentColor.opacity(0.2), Color(.systemGroupedBackground)],
-                    center: .top,
-                    startRadius: 0,
-                    endRadius: 500
-                )
-                .ignoresSafeArea()
-            }
             .navigationTitle("Calories")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                Button("Add Data", systemImage: "plus") {
-                    viewModel.addingData.toggle()
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Change Limit", systemImage: "plusminus.circle") {
+                        viewModel.changingLimit.toggle()
+                    }
+                }
+                ToolbarSpacer(.flexible, placement: .bottomBar)
+                ToolbarItem(placement: .bottomBar) {
+                    Button("Add Data", systemImage: "plus") {
+                        viewModel.addingData.toggle()
+                    }
+                    .tint(.accent)
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .background {
+                if colorScheme == .dark {
+                    RadialGradient(
+                        colors: [Color.accentColor.opacity(0.2), Color(.systemGroupedBackground)],
+                        center: horizontalSizeClass == .compact ? .top : .trailing,
+                        startRadius: 0,
+                        endRadius: 500
+                    )
+                    .ignoresSafeArea()
+                } else {
+                    Rectangle()
+                        .fill(Color.accent.gradient.opacity(0.1))
+                        .ignoresSafeArea()
                 }
             }
             .task {
@@ -118,8 +69,73 @@ struct SummaryView: View {
             .sheet(isPresented: $viewModel.addingData) {
                 NewEntryView()
             }
-            .overlays()
         }
+    }
+
+    @ContentBuilder
+    private var portraitView: some View {
+        List {
+            Section {
+                SummaryHeaderView()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .offset(y: offset)
+
+            }
+            .listRowBackground(Color.clear)
+
+            Section("Weekly Stats") {
+                WeeklyStatsView()
+            }
+            .listRowSeparator(.hidden)
+
+            Section {
+                footerView
+            }
+        }
+        .headerProminence(.increased)
+        .onScrollGeometryChange(for: CGFloat.self) { geo in
+            geo.contentOffset.y + geo.contentInsets.top
+        } action: { oldValue, newValue in
+            print(newValue)
+            offset = -max(0, newValue / 3)
+        }
+    }
+
+    @ContentBuilder
+    private var landscapeView: some View {
+        HStack {
+            List {
+                Section("Weekly Stats") {
+                    WeeklyStatsView()
+                }
+                .listRowSeparator(.hidden)
+
+                Section {
+                    footerView
+                }
+            }
+            .headerProminence(.increased)
+
+            .frame(maxWidth: .infinity)
+            .scrollEdgeEffectStyle(.soft, for: .top)
+
+            SummaryHeaderView()
+                .frame(maxWidth: .infinity)
+        }
+    }
+
+    @ContentBuilder
+    private var footerView: some View {
+        NavigationLink("Show All Data") {
+            HistoricalDataView()
+        }
+        Picker("Unit", selection: $viewModel.unit.animation()) {
+            ForEach(Unit.allCases) { unit in
+                Text(unit.unitExtension)
+                    .tag(unit)
+            }
+        }
+        .pickerStyle(.navigationLink)
     }
 }
 
