@@ -126,6 +126,7 @@ struct SummaryView: View {
 
     @ContentBuilder
     private var footerView: some View {
+        @Bindable var viewModel = self.viewModel
         NavigationLink("Show All Data") {
             HistoricalDataView()
         }
