@@ -15,7 +15,6 @@ struct NumberField<Label: View>: View {
         self.placeholder = placeholder
         self._value = value
         self.label = label()
-        self.presentingInput = isFocused
     }
 
     init(_ placeholder: String?, value: Binding<Double>, @ContentBuilder label: () -> Label) {
@@ -29,14 +28,12 @@ struct NumberField<Label: View>: View {
             }
         )
         self.label = label()
-        self.presentingInput = isFocused
     }
 
     init(_ placeholder: String?, value: Binding<Double?>) where Label == EmptyView {
         self.placeholder = placeholder
         self._value = value
         self.label = EmptyView()
-        self.presentingInput = isFocused
     }
 
     init(_ placeholder: String?, value: Binding<Double>) where Label == EmptyView {
@@ -50,7 +47,6 @@ struct NumberField<Label: View>: View {
             }
         )
         self.label = EmptyView()
-        self.presentingInput = isFocused
     }
 
     let label: Label
@@ -78,10 +74,6 @@ struct NumberField<Label: View>: View {
             }
         }
         .fullScreenCover(isPresented: $presentingInput) {
-            if value != nil {
-                onNumberSubmit()
-            }
-        } content: {
             NavigationStack {
                 NumberInputView(placeholder: placeholder, value: $value, style: numpadStyle)
             }
@@ -89,32 +81,12 @@ struct NumberField<Label: View>: View {
     }
 
     private var numpadStyle: NumpadStyle = .decimal
-    private var onNumberSubmit: () -> Void = {}
-    private var isFocused: Bool = false
     private var hideValue: Bool = false
 
     func numpadStyle(_ style: NumpadStyle) -> Self {
         var copy = self
         copy.numpadStyle = style
         return copy
-    }
-
-    func onNumberSubmit(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.onNumberSubmit = action
-        return copy
-    }
-
-    func isFocused<Value>(_ binding: FocusState<Value>.Binding, equals value: Value) -> Self where Value: Hashable {
-        print(binding.wrappedValue)
-        self.presentingInput = binding.wrappedValue == value
-        return self
-    }
-
-    func isFocused(_ binding: FocusState<Bool>.Binding) -> Self {
-        print(binding.wrappedValue)
-        self.presentingInput = binding.wrappedValue
-        return self
     }
 
     func hideValue(_ enabled: Bool = true) -> Self {

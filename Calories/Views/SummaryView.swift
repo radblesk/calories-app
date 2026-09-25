@@ -97,7 +97,6 @@ struct SummaryView: View {
         .onScrollGeometryChange(for: CGFloat.self) { geo in
             geo.contentOffset.y + geo.contentInsets.top
         } action: { oldValue, newValue in
-            print(newValue)
             offset = max(0, newValue / 6)
         }
     }

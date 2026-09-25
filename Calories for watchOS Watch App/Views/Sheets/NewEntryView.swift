@@ -15,7 +15,6 @@ struct NewEntryView: View {
 
     @State private var newValueString: String = ""
     @State private var newWeightString: String = ""
-    @State private var presentingModal: Bool = false
 
     var body: some View {
         NavigationStack {
