@@ -50,6 +50,8 @@ struct NewEntryView: View {
                             guard let value = viewModel.newValue else { return }
                             Task {
                                 await caloriesModel.storeCalories(value, at: viewModel.newDate)
+                                await caloriesModel.getStatistics(for: .now)
+                                await caloriesModel.getTodayStatistics(for: .now)
                                 dismiss()
                             }
                         }

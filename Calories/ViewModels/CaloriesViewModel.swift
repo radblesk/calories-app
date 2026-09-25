@@ -142,7 +142,6 @@ final class CaloriesViewModel {
 
     func getTodayStatistics(for date: Date) async {
         let startOfDay = Calendar.current.startOfDay(for: date)
-        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 
         todayStatisticsTask?.cancel()
         todayStatisticsTask = Task {
@@ -150,7 +149,7 @@ final class CaloriesViewModel {
                 let stream = client.fetchStatistics(
                     for: .dietaryEnergyConsumed,
                     from: startOfDay,
-                    to: endOfDay,
+                    to: date,
                     interval: DateComponents(minute: 30)
                 )
 
@@ -158,7 +157,7 @@ final class CaloriesViewModel {
                     guard let collection = statisticsCollection else { continue }
 
                     var newStats: [HKStatistics] = []
-                    collection.enumerateStatistics(from: startOfDay, to: endOfDay) { statistics, stop in
+                    collection.enumerateStatistics(from: startOfDay, to: date) { statistics, stop in
                         newStats.append(statistics)
                     }
                     self.todayStatistics = newStats
@@ -175,6 +174,13 @@ final class CaloriesViewModel {
     }
 
     // MARK: - Helpers Methods
+
+    func cancelTasks() {
+        weeklyStatisticsTask?.cancel()
+        weeklyStatisticsTask = nil
+        todayStatisticsTask?.cancel()
+        todayStatisticsTask = nil
+    }
 
     private func calculateWeeklyTotal() -> Double {
         var total: Double = 0

@@ -13,6 +13,7 @@ struct SummaryView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.scenePhase) private var scenePhase
     @State private var offset: Double = 0
 
     var body: some View {
@@ -56,9 +57,13 @@ struct SummaryView: View {
                         .ignoresSafeArea()
                 }
             }
-            .task {
-                await viewModel.getTodayStatistics(for: .now)
-                await viewModel.getStatistics(for: .now)
+            .task(id: scenePhase) {
+                if scenePhase == .active {
+                    await viewModel.getStatistics(for: .now)
+                    await viewModel.getTodayStatistics(for: .now)
+                } else {
+                    viewModel.cancelTasks()
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ import WidgetKit
 struct ContentView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
     @State private var currentTab: ActiveTab = .rings
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         @Bindable var viewModel = self.viewModel
@@ -27,9 +28,13 @@ struct ContentView: View {
                 }
             }
             .tabViewStyle(.carousel)
-            .task {
-                await viewModel.getStatistics(for: .now)
-                await viewModel.getTodayStatistics(for: .now)
+            .task(id: scenePhase) {
+                if scenePhase == .active {
+                    await viewModel.getStatistics(for: .now)
+                    await viewModel.getTodayStatistics(for: .now)
+                } else {
+                    viewModel.cancelTasks()
+                }
             }
             .overlays()
         }
