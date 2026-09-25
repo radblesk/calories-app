@@ -59,12 +59,6 @@ struct SummaryView: View {
             .task {
                 await viewModel.getTodayStatistics(for: .now)
                 await viewModel.getStatistics(for: .now)
-                WidgetCenter.shared.reloadTimelines(ofKind: "CaloriesRingsWidgets")
-            }
-            .refreshable {
-                await viewModel.getTodayStatistics(for: .now)
-                await viewModel.getStatistics(for: .now)
-                WidgetCenter.shared.reloadTimelines(ofKind: "CaloriesRingsWidgets")
             }
         }
     }

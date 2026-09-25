@@ -30,7 +30,6 @@ struct ContentView: View {
             .task {
                 await viewModel.getStatistics(for: .now)
                 await viewModel.getTodayStatistics(for: .now)
-                WidgetCenter.shared.reloadTimelines(ofKind: "CaloriesRingsWidgets")
             }
             .overlays()
         }

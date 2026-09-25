@@ -19,9 +19,11 @@ final class CaloriesViewModel {
 
     private init() {
         let legacyDefaults = UserDefaults.standard
-        let savedLimit = Self.defaults.object(forKey: "dailyLimit") as? Double
+        let savedLimit =
+            Self.defaults.object(forKey: "dailyLimit") as? Double
             ?? legacyDefaults.object(forKey: "dailyLimit") as? Double
-        let savedUnit = Self.defaults.string(forKey: "unit")
+        let savedUnit =
+            Self.defaults.string(forKey: "unit")
             ?? legacyDefaults.string(forKey: "unit")
 
         calorieLimit = savedLimit ?? 1500
@@ -57,7 +59,7 @@ final class CaloriesViewModel {
             if !isApplyingRemoteSettings {
                 WatchSyncManager.shared.syncDailyLimit(calorieLimit)
             }
-            WidgetCenter.shared.reloadAllTimelines()
+            reloadWidgets()
         }
     }
     var overLimit: Double? {
@@ -75,7 +77,7 @@ final class CaloriesViewModel {
             if !isApplyingRemoteSettings {
                 WatchSyncManager.shared.syncUnit(unit)
             }
-            WidgetCenter.shared.reloadAllTimelines()
+            reloadWidgets()
         }
     }
 
@@ -83,6 +85,11 @@ final class CaloriesViewModel {
 
     var addingData: Bool = false
     var changingLimit: Bool = false
+
+    // Tasks
+
+    private var weeklyStatisticsTask: Task<Void, Never>?
+    private var todayStatisticsTask: Task<Void, Never>?
 
     // MARK: - Methods
 
@@ -108,49 +115,66 @@ final class CaloriesViewModel {
         isApplyingRemoteSettings = false
     }
 
-    func saveCalories(_ count: Double, at date: Date) async {
-        await client.saveSample(for: .dietaryEnergyConsumed, count: count, at: date)
-        await getTodayStatistics(for: .now)
-        await getStatistics(for: .now)
-    }
-
     func getStatistics(for date: Date) async {
         let weekAgo = Calendar.current.date(byAdding: .day, value: -6, to: date)!
         let startDate = Calendar.current.startOfDay(for: weekAgo)
 
-        guard
-            let statistics = await client.fetchStatistics(
-                for: .dietaryEnergyConsumed,
-                from: startDate,
-                to: nil,
-                interval: DateComponents(day: 1)
-            )
-        else { return }
-        self.statistics.removeAll()
+        weeklyStatisticsTask?.cancel()
+        weeklyStatisticsTask = Task {
+            do {
+                let stream = client.fetchStatistics(for: .dietaryEnergyConsumed, from: startDate, to: nil, interval: DateComponents(day: 1))
 
-        statistics.enumerateStatistics(from: startDate, to: date) { [weak self] statistics, stop in
-            guard let self else { return }
-            self.statistics.append(statistics)
+                for try await statisticsCollection in stream {
+                    guard let collection = statisticsCollection else { continue }
+
+                    var newStats: [HKStatistics] = []
+                    collection.enumerateStatistics(from: startDate, to: date) { statistics, stop in
+                        newStats.append(statistics)
+                    }
+                    self.statistics = newStats
+                    reloadWidgets()
+                }
+            } catch {
+                print("Error fetching statistics")
+            }
         }
     }
 
     func getTodayStatistics(for date: Date) async {
         let startOfDay = Calendar.current.startOfDay(for: date)
-        guard
-            let statistics = await client.fetchStatistics(
-                for: .dietaryEnergyConsumed,
-                from: startOfDay,
-                to: date,
-                interval: DateComponents(minute: 30)
-            )
-        else { return }
-        self.todayStatistics.removeAll()
+        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 
-        statistics.enumerateStatistics(from: startOfDay, to: date) { [weak self] statistics, stop in
-            guard let self else { return }
-            self.todayStatistics.append(statistics)
+        todayStatisticsTask?.cancel()
+        todayStatisticsTask = Task {
+            do {
+                let stream = client.fetchStatistics(
+                    for: .dietaryEnergyConsumed,
+                    from: startOfDay,
+                    to: endOfDay,
+                    interval: DateComponents(minute: 30)
+                )
+
+                for try await statisticsCollection in stream {
+                    guard let collection = statisticsCollection else { continue }
+
+                    var newStats: [HKStatistics] = []
+                    collection.enumerateStatistics(from: startOfDay, to: endOfDay) { statistics, stop in
+                        newStats.append(statistics)
+                    }
+                    self.todayStatistics = newStats
+                    reloadWidgets()
+                }
+            } catch {
+                print("Error fetching statistics")
+            }
         }
     }
+
+    func storeCalories(_ count: Double, at date: Date) async {
+        await client.saveSample(for: .dietaryEnergyConsumed, count: count, at: date)
+    }
+
+    // MARK: - Helpers Methods
 
     private func calculateWeeklyTotal() -> Double {
         var total: Double = 0
@@ -167,5 +191,9 @@ final class CaloriesViewModel {
             .filter { !$0.isZero }
         guard !values.isEmpty else { return 0 }
         return values.reduce(0, +) / Double(values.count)
+    }
+
+    private func reloadWidgets() {
+        WidgetCenter.shared.reloadTimelines(ofKind: "CaloriesRingsWidgets")
     }
 }

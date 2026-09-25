@@ -128,7 +128,7 @@ struct NewEntryView: View {
                         Button(role: .confirm) {
                             guard let newValue = viewModel.newValue else { return }
                             Task {
-                                await caloriesModel.saveCalories(newValue, at: viewModel.newDate)
+                                await caloriesModel.storeCalories(newValue, at: viewModel.newDate)
                                 dismiss()
                             }
                         }

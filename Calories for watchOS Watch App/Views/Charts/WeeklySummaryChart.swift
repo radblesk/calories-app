@@ -64,15 +64,3 @@ struct WeeklySummaryChart: View {
         .padding(.bottom, -20)
     }
 }
-
-#Preview {
-    @Previewable @State var viewModel = CaloriesViewModel.shared
-
-    VStack {
-        WeeklySummaryChart(data: viewModel.statistics)
-            .environment(viewModel)
-            .task {
-                await viewModel.getStatistics(for: .now)
-            }
-    }
-}
