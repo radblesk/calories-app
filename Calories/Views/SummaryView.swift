@@ -14,6 +14,7 @@ struct SummaryView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var offset: Double = 0
+    @State private var scale: Double = 0
 
     var body: some View {
         @Bindable var viewModel = self.viewModel
@@ -66,6 +67,7 @@ struct SummaryView: View {
                     .offset(y: offset)
                     .opacity(1 - (offset / 40))
                     .safeAreaPadding()
+                    .scaleEffect(1 + scale)
 
             }
             .listRowBackground(Color.clear)
@@ -85,6 +87,10 @@ struct SummaryView: View {
         .onScrollGeometryChange(for: CGFloat.self) { geo in
             geo.contentOffset.y + geo.contentInsets.top
         } action: { oldValue, newValue in
+            if newValue < 0 {
+                let newScale = abs(newValue) / 1000
+                scale = min(newScale, 0.2)
+            }
             offset = max(0, newValue / 6)
         }
     }
