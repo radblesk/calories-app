@@ -116,7 +116,7 @@ struct SummaryView: View {
             SummaryHeaderView()
                 .frame(maxWidth: .infinity)
                 .safeAreaPadding()
-                .offset(y: 30)
+                .offset(y: 15)
         }
     }
 
@@ -137,6 +137,8 @@ struct SummaryView: View {
 }
 
 #Preview {
-    SummaryView()
-        .environments()
+    NavigationStack {
+        SummaryView()
+            .environments()
+    }
 }
