@@ -11,23 +11,23 @@ struct RingsTabView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
 
     var body: some View {
-        ZStack {
-            Ring(progress: viewModel.consumedProgress, level: 1)
-                .showSymbol()
-            Ring(progress: viewModel.overLimitProgress, level: 2)
-                .showSymbol()
+        VStack(spacing: 10) {
+            SemicircleProgressView(value: viewModel.caloriesConsumed, total: viewModel.calorieLimit, color: .pink)
+                .padding(10)
 
-            VStack {
-                Text(viewModel.caloriesRemaining > 0 ? viewModel.caloriesRemaining.formattedValue() : "--")
-                    .contentTransition(.numericText(value: viewModel.caloriesRemaining))
-                    .animation(.bouncy, value: viewModel.caloriesRemaining)
-                    .fontWeight(.medium)
-                    .fontDesign(.rounded)
-                    .foregroundStyle(viewModel.overLimit == nil ? .primary : Color.red)
-                Text(viewModel.unit.unitExtension)
-                    .foregroundStyle(.secondary)
-                    .font(.footnote)
+            Group {
+                if let overLimit = viewModel.overLimit, overLimit > 0 {
+                    Text("\(overLimit.formattedValue()) over limit")
+                        .foregroundStyle(.orange)
+                        .contentTransition(.numericText(value: overLimit))
+                        .animation(.bouncy, value: overLimit)
+                } else {
+                    Text("\(viewModel.caloriesRemaining.formattedValue()) left")
+                        .contentTransition(.numericText(value: viewModel.caloriesRemaining))
+                        .animation(.bouncy, value: viewModel.caloriesRemaining)
+                }
             }
+            .fontWeight(.medium)
         }
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {

@@ -17,7 +17,7 @@ enum ActiveTab: String, Identifiable {
     var tabColor: Color {
         switch self {
         case .rings:
-            .gray.opacity(0.5)
+            .pink.opacity(0.5)
         case .todaySummary:
             .pink
         case .statistics:
