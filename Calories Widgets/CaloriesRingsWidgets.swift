@@ -29,10 +29,11 @@ struct Provider: TimelineProvider {
 
     private func loadEntry() async -> CalorieEntry {
         let store = CaloriesViewModel.shared
-
+        store.loadPersistentData()
         let consumed = await HealthStoreClient.shared.fetchTodayTotal(for: .dietaryEnergyConsumed)
         let limit = store.calorieLimit
-        let overLimit = store.overLimit
+        let remaining = limit - consumed
+        let overLimit = remaining < 0 ? abs(remaining) : nil
 
         return CalorieEntry(date: .now, consumed: consumed, limit: limit, overLimit: overLimit, unit: store.unit)
     }

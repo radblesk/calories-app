@@ -155,6 +155,12 @@ final class CaloriesViewModel {
         isApplyingRemoteSettings = false
     }
 
+    // MARK: - Widgets Helpers
+
+    func loadPersistentData() {
+        restoreDefaults()
+    }
+
     // MARK: - Helpers Methods
 
     private func setLimit(_ value: Double) {
@@ -186,7 +192,7 @@ final class CaloriesViewModel {
         }
 
         calorieLimit = defaults.object(forKey: "dailyLimit") as? Double ?? 1500
-        reloadWidgets()
+//        reloadWidgets()
     }
 
     private func calculateWeeklyTotal() -> Double {
