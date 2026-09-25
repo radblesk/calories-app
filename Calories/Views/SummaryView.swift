@@ -77,12 +77,12 @@ struct SummaryView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .offset(y: offset)
                     .opacity(1 - (offset / 40))
-                    .safeAreaPadding(.vertical)
+                    .safeAreaPadding()
 
             }
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
-            .listSectionMargins(.all, 0)
+            .listSectionMargins(.vertical, 0)
 
             Section("Weekly Stats") {
                 WeeklyStatsView()
@@ -121,6 +121,7 @@ struct SummaryView: View {
 
             SummaryHeaderView()
                 .frame(maxWidth: .infinity)
+                .safeAreaPadding()
                 .offset(y: 30)
         }
     }
