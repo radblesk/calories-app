@@ -74,11 +74,19 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
+            BlueprintIdentifier = "F9E720983064058000E78CDC"
+            BuildableName = "Calories WidgetsExtension Watch.appex"
+            ReferencedContainer = "container:Calories.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
             BlueprintIdentifier = "F957C3BB3062A136007B022E"
             BuildableName = "Calories for watchOS Watch App.app"
             ReferencedContainer = "container:Calories.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "_XCWidgetKind"

@@ -112,6 +112,7 @@
 				Extensions/isToday.swift,
 				Extensions/overlays.swift,
 				Extensions/sampleFormattedDate.swift,
+				Shapes/Semicircle.swift,
 				Structures/EnergyData.swift,
 				Structures/HealthStoreClientConfirmation.swift,
 				Structures/HealthStoreClientError.swift,
@@ -120,6 +121,7 @@
 				ViewModels/HistoricalDataViewModel.swift,
 				ViewModels/NewEntryViewModel.swift,
 				Views/HistoricalDataView.swift,
+				Views/ProgressViews/SemicircleProgressView.swift,
 				Views/SampleDetailView.swift,
 			);
 			target = F957C3BB3062A136007B022E /* Calories for watchOS Watch App */;
@@ -158,12 +160,15 @@
 		F9EE9F6B3064148D00157F7D /* Exceptions for "Calories" folder in "Calories WidgetsExtension Watch" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
 				Enumerations/Unit.swift,
 				Extensions/formattedValue.swift,
+				Shapes/Semicircle.swift,
 				Structures/HealthStoreClientConfirmation.swift,
 				Structures/HealthStoreClientError.swift,
 				ViewModels/CaloriesViewModel.swift,
 				ViewModels/HealthStoreClient.swift,
+				Views/ProgressViews/SemicircleProgressView.swift,
 			);
 			target = F9E720983064058000E78CDC /* Calories WidgetsExtension Watch */;
 		};
@@ -180,6 +185,7 @@
 				Assets.xcassets,
 				Enumerations/Unit.swift,
 				Extensions/formattedValue.swift,
+				Shapes/Semicircle.swift,
 				Structures/HealthStoreClientConfirmation.swift,
 				Structures/HealthStoreClientError.swift,
 				ViewModels/CaloriesViewModel.swift,
