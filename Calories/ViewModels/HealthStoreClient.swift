@@ -116,6 +116,26 @@ final class HealthStoreClient {
         }
     }
 
+    func fetchTodayTotal(for identifier: HKQuantityTypeIdentifier) async -> Double {
+        guard let quantityType = HKObjectType.quantityType(forIdentifier: identifier) else { return 0 }
+
+        let startOfDay = Calendar.current.startOfDay(for: .now)
+        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
+
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: endOfDay)
+
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(quantityType: quantityType, quantitySamplePredicate: predicate, options: .cumulativeSum) {
+                _,
+                statistics,
+                _ in
+                let value = statistics?.sumQuantity()?.doubleValue(for: CaloriesViewModel.shared.unit.hkUnit) ?? 0
+                continuation.resume(returning: value)
+            }
+            healthStore?.execute(query)
+        }
+    }
+
     func fetchRecords(for identifier: HKQuantityTypeIdentifier) async -> [HKQuantitySample] {
         guard isAvailable, let sampleType = HKObjectType.quantityType(forIdentifier: identifier), let healthStore else { return [] }
         let predicate = HKSamplePredicate.quantitySample(type: sampleType)

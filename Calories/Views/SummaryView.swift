@@ -13,57 +13,46 @@ struct SummaryView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.scenePhase) private var scenePhase
     @State private var offset: Double = 0
 
     var body: some View {
         @Bindable var viewModel = self.viewModel
-        NavigationStack {
-            AdaptiveView {
-                portraitView
-            } secondary: {
-                landscapeView
-            }
-            .scrollContentBackground(.hidden)
-            .navigationTitle("Calories")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button("Change Limit", systemImage: "plusminus.circle") {
-                        viewModel.changingLimit.toggle()
-                    }
-                }
-                ToolbarSpacer(.flexible, placement: .bottomBar)
-                ToolbarItem(placement: .bottomBar) {
-                    Button("Add Data", systemImage: "plus") {
-                        viewModel.addingData.toggle()
-                    }
-                    .tint(.accent)
-                    .buttonStyle(.borderedProminent)
+        AdaptiveView {
+            portraitView
+        } secondary: {
+            landscapeView
+        }
+        .scrollContentBackground(.hidden)
+        .navigationTitle("Calories")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Change Limit", systemImage: "plusminus.circle") {
+                    viewModel.changingLimit.toggle()
                 }
             }
-            .background {
-                if colorScheme == .dark {
-                    RadialGradient(
-                        colors: [Color.accentColor.opacity(0.2), Color(.systemGroupedBackground)],
-                        center: horizontalSizeClass == .compact ? .top : .trailing,
-                        startRadius: 0,
-                        endRadius: 500
-                    )
+            ToolbarSpacer(.flexible, placement: .bottomBar)
+            ToolbarItem(placement: .bottomBar) {
+                Button("Add Data", systemImage: "plus") {
+                    viewModel.addingData.toggle()
+                }
+                .tint(.accent)
+                .buttonStyle(.borderedProminent)
+            }
+        }
+        .background {
+            if colorScheme == .dark {
+                RadialGradient(
+                    colors: [Color.accentColor.opacity(0.2), Color(.systemGroupedBackground)],
+                    center: horizontalSizeClass == .compact ? .top : .trailing,
+                    startRadius: 0,
+                    endRadius: 500
+                )
+                .ignoresSafeArea()
+            } else {
+                Rectangle()
+                    .fill(Color.accent.gradient.opacity(0.1))
                     .ignoresSafeArea()
-                } else {
-                    Rectangle()
-                        .fill(Color.accent.gradient.opacity(0.1))
-                        .ignoresSafeArea()
-                }
-            }
-            .task(id: scenePhase) {
-                if scenePhase == .active {
-                    await viewModel.getStatistics(for: .now)
-                    await viewModel.getTodayStatistics(for: .now)
-                } else {
-                    viewModel.cancelTasks()
-                }
             }
         }
     }

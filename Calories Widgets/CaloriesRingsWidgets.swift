@@ -5,6 +5,7 @@
 //  Created by Radoslav Bley on 23/09/2026.
 //
 
+internal import HealthKit
 import SwiftUI
 import WidgetKit
 
@@ -28,10 +29,8 @@ struct Provider: TimelineProvider {
 
     private func loadEntry() async -> CalorieEntry {
         let store = CaloriesViewModel.shared
-        store.loadPersistedSettings()
-        await store.getTodayStatistics(for: .now)
 
-        let consumed = store.caloriesConsumed
+        let consumed = await HealthStoreClient.shared.fetchTodayTotal(for: .dietaryEnergyConsumed)
         let limit = store.calorieLimit
         let overLimit = store.overLimit
 

@@ -12,25 +12,10 @@ import WidgetKit
 @Observable
 final class CaloriesViewModel {
     static let shared = CaloriesViewModel()
-    static let defaults = UserDefaults(suiteName: "group.com.radobley.Calories") ?? .standard
-
-    private var isApplyingRemoteSettings = false
-    private var isLoadingPersistedSettings = false
+    let defaults = SharedStorage.defaults
 
     private init() {
-        let legacyDefaults = UserDefaults.standard
-        let savedLimit =
-            Self.defaults.object(forKey: "dailyLimit") as? Double
-            ?? legacyDefaults.object(forKey: "dailyLimit") as? Double
-        let savedUnit =
-            Self.defaults.string(forKey: "unit")
-            ?? legacyDefaults.string(forKey: "unit")
-
-        calorieLimit = savedLimit ?? 1500
-        unit = savedUnit.flatMap(Unit.init(rawValue:)) ?? .kcal
-
-        Self.defaults.set(calorieLimit, forKey: "dailyLimit")
-        Self.defaults.set(unit.rawValue, forKey: "unit")
+        restoreDefaults()
     }
 
     let client = HealthStoreClient.shared
@@ -48,36 +33,24 @@ final class CaloriesViewModel {
     var caloriesRemaining: Double { max(calorieLimit - caloriesConsumed, 0) }
     var consumedProgress: Double { caloriesConsumed / calorieLimit }
     var overLimitProgress: Double { (overLimit ?? 0) / calorieLimit }
-
-    // Goals/Limits
-
-    var calorieLimit: Double {
-        didSet {
-            guard !isLoadingPersistedSettings else { return }
-            Self.defaults.set(calorieLimit, forKey: "dailyLimit")
-            Self.defaults.synchronize()
-            if !isApplyingRemoteSettings {
-                WatchSyncManager.shared.syncDailyLimit(calorieLimit)
-            }
-            reloadWidgets()
-        }
-    }
     var overLimit: Double? {
         let remaining = calorieLimit - caloriesConsumed
         return remaining < 0 ? abs(remaining) : nil
     }
 
+    // Goals/Limits
+
+    var calorieLimit: Double = 0 {
+        didSet {
+            setLimit(calorieLimit)
+        }
+    }
+
     // Units
 
-    var unit: Unit {
+    var unit: Unit = .kcal {
         didSet {
-            guard !isLoadingPersistedSettings else { return }
-            Self.defaults.set(unit.rawValue, forKey: "unit")
-            Self.defaults.synchronize()
-            if !isApplyingRemoteSettings {
-                WatchSyncManager.shared.syncUnit(unit)
-            }
-            reloadWidgets()
+            setUnit(unit)
         }
     }
 
@@ -86,34 +59,24 @@ final class CaloriesViewModel {
     var addingData: Bool = false
     var changingLimit: Bool = false
 
+    // Settings
+
+    private var settingsModifiedAt: Double {
+        get {
+            defaults.double(forKey: "settingsModifiedAt")
+        }
+        set {
+            defaults.set(newValue, forKey: "settingsModifiedAt")
+        }
+    }
+    private var isApplyingRemoteSettings: Bool = false
+
     // Tasks
 
     private var weeklyStatisticsTask: Task<Void, Never>?
     private var todayStatisticsTask: Task<Void, Never>?
 
     // MARK: - Methods
-
-    /// Reloads settings that may have been changed by the containing app while
-    /// this process was kept alive, as is common for WidgetKit extensions.
-    func loadPersistedSettings() {
-        Self.defaults.synchronize()
-        isLoadingPersistedSettings = true
-        defer { isLoadingPersistedSettings = false }
-
-        calorieLimit = Self.defaults.object(forKey: "dailyLimit") as? Double ?? 1500
-        unit = Self.defaults.string(forKey: "unit").flatMap(Unit.init(rawValue:)) ?? .kcal
-    }
-
-    func applyRemoteSettings(dailyLimit: Double?, unit: Unit?) {
-        isApplyingRemoteSettings = true
-        if let dailyLimit {
-            calorieLimit = dailyLimit
-        }
-        if let unit {
-            self.unit = unit
-        }
-        isApplyingRemoteSettings = false
-    }
 
     func getStatistics(for date: Date) async {
         let weekAgo = Calendar.current.date(byAdding: .day, value: -6, to: date)!
@@ -142,6 +105,7 @@ final class CaloriesViewModel {
 
     func getTodayStatistics(for date: Date) async {
         let startOfDay = Calendar.current.startOfDay(for: date)
+        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)
 
         todayStatisticsTask?.cancel()
         todayStatisticsTask = Task {
@@ -149,7 +113,7 @@ final class CaloriesViewModel {
                 let stream = client.fetchStatistics(
                     for: .dietaryEnergyConsumed,
                     from: startOfDay,
-                    to: date,
+                    to: endOfDay,
                     interval: DateComponents(minute: 30)
                 )
 
@@ -157,7 +121,7 @@ final class CaloriesViewModel {
                     guard let collection = statisticsCollection else { continue }
 
                     var newStats: [HKStatistics] = []
-                    collection.enumerateStatistics(from: startOfDay, to: date) { statistics, stop in
+                    collection.enumerateStatistics(from: startOfDay, to: .now) { statistics, stop in
                         newStats.append(statistics)
                     }
                     self.todayStatistics = newStats
@@ -173,13 +137,56 @@ final class CaloriesViewModel {
         await client.saveSample(for: .dietaryEnergyConsumed, count: count, at: date)
     }
 
-    // MARK: - Helpers Methods
-
     func cancelTasks() {
         weeklyStatisticsTask?.cancel()
         weeklyStatisticsTask = nil
         todayStatisticsTask?.cancel()
         todayStatisticsTask = nil
+    }
+
+    // MARK: - WCSession Helpers
+
+    func applyRemoteSettings(unit: Unit, limit: Double, modifiedAt: Double) {
+        guard modifiedAt > settingsModifiedAt else { return }
+        isApplyingRemoteSettings = true
+        self.unit = unit
+        self.calorieLimit = limit
+        self.settingsModifiedAt = modifiedAt
+        isApplyingRemoteSettings = false
+    }
+
+    // MARK: - Helpers Methods
+
+    private func setLimit(_ value: Double) {
+        defaults.set(calorieLimit, forKey: "dailyLimit")
+        reloadWidgets()
+        guard !isApplyingRemoteSettings else { return }
+        settingsModifiedAt = Date.now.timeIntervalSince1970
+        WatchSyncManager.shared.syncSettings(unit: unit, limit: value, modifiedAt: settingsModifiedAt)
+    }
+
+    private func setUnit(_ value: Unit) {
+        if let encoded = try? JSONEncoder().encode(value) {
+            defaults.set(encoded, forKey: "unit")
+        }
+        reloadWidgets()
+
+        guard !isApplyingRemoteSettings else { return }
+        settingsModifiedAt = Date.now.timeIntervalSince1970
+        WatchSyncManager.shared.syncSettings(unit: value, limit: calorieLimit, modifiedAt: settingsModifiedAt)
+    }
+
+    private func restoreDefaults() {
+        let decoder = JSONDecoder()
+
+        if let savedUnit = defaults.data(forKey: "unit"),
+            let decodedUnit = try? decoder.decode(Unit.self, from: savedUnit)
+        {
+            self.unit = decodedUnit
+        }
+
+        calorieLimit = defaults.object(forKey: "dailyLimit") as? Double ?? 1500
+        reloadWidgets()
     }
 
     private func calculateWeeklyTotal() -> Double {

@@ -76,6 +76,7 @@
 		F9E720993064058000E78CDC /* Calories WidgetsExtension Watch.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Calories WidgetsExtension Watch.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9E7209B3064058000E78CDC /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		F9E7209D3064058000E78CDC /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		F9F12B0A30669C3000DBBE59 /* Calories-for-watchOS-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Calories-for-watchOS-Watch-App-Info.plist"; sourceTree = "<group>"; };
 		F9FF117E30641CBB00E195FD /* Calories WidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Calories WidgetsExtension.entitlements"; sourceTree = "<group>"; };
 		F9FF118C3064211400E195FD /* Calories WidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Calories WidgetsExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9FF11983064211400E195FD /* Calories WidgetsExtension copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Calories WidgetsExtension copy-Info.plist"; path = "/Users/radoslavbley/XcodeProjects/Personal/Calories/Calories WidgetsExtension copy-Info.plist"; sourceTree = "<absolute>"; };
@@ -106,6 +107,7 @@
 				AppIcon.icon,
 				Assets.xcassets,
 				Enumerations/FocusedField.swift,
+				Enumerations/SharedStorage.swift,
 				Enumerations/Unit.swift,
 				Extensions/environments.swift,
 				Extensions/formattedValue.swift,
@@ -161,6 +163,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
+				Enumerations/SharedStorage.swift,
 				Enumerations/Unit.swift,
 				Extensions/formattedValue.swift,
 				Shapes/Semicircle.swift,
@@ -171,6 +174,13 @@
 				Views/ProgressViews/SemicircleProgressView.swift,
 			);
 			target = F9E720983064058000E78CDC /* Calories WidgetsExtension Watch */;
+		};
+		F9F12B0930669C1D00DBBE59 /* Exceptions for "Calories" folder in "Calories" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F995DD3C30603F1C00B69010 /* Calories */;
 		};
 		F9FF11993064211500E195FD /* Exceptions for "Calories Widgets" folder in "Calories WidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -183,6 +193,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
+				Enumerations/SharedStorage.swift,
 				Enumerations/Unit.swift,
 				Extensions/formattedValue.swift,
 				Shapes/Semicircle.swift,
@@ -210,6 +221,7 @@
 		F995DD3F30603F1C00B69010 /* Calories */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				F9F12B0930669C1D00DBBE59 /* Exceptions for "Calories" folder in "Calories" target */,
 				F957C3D93062A15F007B022E /* Exceptions for "Calories" folder in "Calories for watchOS Watch App" target */,
 				F9EE9F6B3064148D00157F7D /* Exceptions for "Calories" folder in "Calories WidgetsExtension Watch" target */,
 				F9FF119A3064211500E195FD /* Exceptions for "Calories" folder in "Calories WidgetsExtension" target */,
@@ -261,6 +273,7 @@
 		F995DD3430603F1C00B69010 = {
 			isa = PBXGroup;
 			children = (
+				F9F12B0A30669C3000DBBE59 /* Calories-for-watchOS-Watch-App-Info.plist */,
 				F9FF117E30641CBB00E195FD /* Calories WidgetsExtension.entitlements */,
 				F995DD3F30603F1C00B69010 /* Calories */,
 				F957C3BD3062A136007B022E /* Calories for watchOS Watch App */,
@@ -497,6 +510,7 @@
 				DEVELOPMENT_TEAM = DZT7WAAW32;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Calories-for-watchOS-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Calories for watchOS";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "This app does not access your clinical health records, but this permission is required by the system for HealthKit integration.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app requires access to your health data to read your daily calorie intake and help you track it against your limit.";
@@ -511,6 +525,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.radobley.Calories.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -535,6 +550,7 @@
 				DEVELOPMENT_TEAM = DZT7WAAW32;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Calories-for-watchOS-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Calories for watchOS";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "This app does not access your clinical health records, but this permission is required by the system for HealthKit integration.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app requires access to your health data to read your daily calorie intake and help you track it against your limit.";
@@ -549,6 +565,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.radobley.Calories.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -698,6 +715,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Calories/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Calories;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "This app does not access your clinical health records, but this permission is required by the system for HealthKit integration.";
@@ -749,6 +767,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Calories/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Calories;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "This app does not access your clinical health records, but this permission is required by the system for HealthKit integration.";
@@ -810,6 +829,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.radobley.Calories.watchkitapp.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -847,6 +867,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.radobley.Calories.watchkitapp.Widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

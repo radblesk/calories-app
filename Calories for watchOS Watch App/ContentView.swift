@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import WidgetKit
 
 struct ContentView: View {
     @Environment(CaloriesViewModel.self) private var viewModel
@@ -28,6 +27,7 @@ struct ContentView: View {
                 }
             }
             .tabViewStyle(.carousel)
+            .overlays()
             .task(id: scenePhase) {
                 if scenePhase == .active {
                     await viewModel.getStatistics(for: .now)
@@ -36,7 +36,6 @@ struct ContentView: View {
                     viewModel.cancelTasks()
                 }
             }
-            .overlays()
         }
     }
 }

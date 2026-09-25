@@ -8,13 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(CaloriesViewModel.self) private var viewModel
+
     var body: some View {
-        SummaryView()
-            .overlays()
-            .task {
-                await HealthStoreClient.shared.requestAuthorizationIfNeeded()
-            }
+        NavigationStack {
+            SummaryView()
+                .overlays()
+                .task(id: scenePhase) {
+                    await HealthStoreClient.shared.requestAuthorizationIfNeeded()
+
+                    if scenePhase == .active {
+                        await viewModel.getStatistics(for: .now)
+                        await viewModel.getTodayStatistics(for: .now)
+                    } else {
+                        viewModel.cancelTasks()
+                    }
+                }
+        }
     }
 }
 
