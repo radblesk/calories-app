@@ -21,7 +21,7 @@ struct ChartBottomRow: View {
             LabeledContent("Remaining", value: "\(viewModel.caloriesRemaining.formattedValue()) \(viewModel.unit.unitExtension)")
             LabeledContent("Limit", value: "\(viewModel.calorieLimit.formattedValue()) \(viewModel.unit.unitExtension)")
             if let overLimit = viewModel.overLimit?.formattedValue() {
-                LabeledContent("Over Limit", value: "\(overLimit) \(viewModel.unit.unitExtension)")
+                LabeledContent("Exceeded", value: "\(overLimit) \(viewModel.unit.unitExtension)")
                     .foregroundStyle(.red)
             }
         }

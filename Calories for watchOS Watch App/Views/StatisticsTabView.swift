@@ -17,7 +17,7 @@ struct StatisticsTabView: View {
             StatisticsRowView(title: "Remaining", value: viewModel.caloriesRemaining)
             if let overLimit = viewModel.overLimit {
                 Divider()
-                StatisticsRowView(title: "Over Limit", value: overLimit)
+                StatisticsRowView(title: "Exceeded", value: overLimit)
             }
         }
         .padding(.horizontal)
