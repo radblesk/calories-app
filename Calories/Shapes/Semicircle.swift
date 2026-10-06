@@ -21,11 +21,15 @@ struct Semicircle: Shape {
         path.addArc(
             center: CGPoint(x: rect.midX, y: rect.maxY),
             radius: radius,
-            startAngle: .degrees(secondary ? 190 : 180),
-            endAngle: .degrees(secondary ? -10 : 0),
+            startAngle: .degrees(secondary ? 190 : 200),
+            endAngle: .degrees(secondary ? -10 : -20),
             clockwise: false
         )
 
         return path
     }
+}
+
+#Preview {
+    SemicircleProgressView(value: 0.3, total: 1)
 }

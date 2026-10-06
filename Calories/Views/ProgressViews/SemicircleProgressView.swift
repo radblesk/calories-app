@@ -45,7 +45,7 @@ struct SemicircleProgressView: View {
                 if total != nil {
                     Text(value > 0 ? value.formattedValue() : "--")
                         .font(.system(size: size * 0.18, weight: .bold, design: .rounded))
-                        .offset(y: size * 0.12)
+                        .offset(y: size * (secondaryValue != nil ? 0.11 : 0.01))
                         .contentTransition(.numericText(value: value))
                         .animation(.bouncy, value: value)
                         .privacySensitive(isWidget)
@@ -107,8 +107,7 @@ struct SemicircleProgressView: View {
 #Preview {
     VStack {
         SemicircleProgressView(value: 1540, total: 1500)
-            .secondaryValue(345, color: .orange)
+//            .secondaryValue(345, color: .orange)
             .frame(maxWidth: 300)
-            .border(.red)
     }
 }
